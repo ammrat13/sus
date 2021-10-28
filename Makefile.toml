@@ -1,0 +1,94 @@
+# Makefile for this project
+#
+# Needed since we need to do custom operations for installation. In particular,
+# need to install some parts as setuid root. We use `cargo-make` instead of just
+# a standard `Makefile` because it integrates better.
+#
+# See: https://github.com/sagiegurari/cargo-make
+
+
+[env]
+
+# Don't compile with `--all-features` or `--verbose`
+CARGO_MAKE_CARGO_BUILD_TEST_FLAGS = { unset = true }
+CARGO_MAKE_CARGO_VERBOSE_FLAGS = { unset = true }
+
+# Fail on any lint errors
+CARGO_MAKE_CLIPPY_ARGS = "-- -D warnings"
+
+
+# Task to build
+# Builds in debug or release mode depending on an environment variable
+[tasks.indirect-build]
+description = "Indirection for building SUS, controlling mode with a variable"
+category = "Development"
+run_task = [
+    { name = "build",         condition = { env_false = ["SUS_BUILD_RELEASE"] } },
+    { name = "build-release", condition = { env_true  = ["SUS_BUILD_RELEASE"] } },
+]
+
+
+# Task to build the application
+# The mode of the application is determined by the `SUS_BUILD_RELEASE` variable
+# Will also test the application, as well as run formatting and linting
+[tasks.sus-build]
+description = "Workflow to build and test SUS in debug mode"
+category = "Development"
+dependencies = [
+    "pre-verify-project",
+    "verify-project",
+    "post-verify-project",
+    "pre-format",
+    "format",
+    "post-format",
+    "pre-clippy",
+    "clippy",
+    "post-clippy",
+    "pre-build",
+    "indirect-build",
+    "post-build",
+    "pre-test",
+    "test",
+    "post-test",
+]
+
+# Task to build the application in debug mode
+[tasks.sus-debug-build]
+env = { "SUS_BUILD_RELEASE" = false }
+run_task = "sus-build"
+
+# Task to build the application in release mode
+[tasks.sus-release-build]
+env = { "SUS_BUILD_RELEASE" = true }
+run_task = "sus-build"
+
+
+# Task to install
+# We have to install as setuid root
+[tasks.install]
+description = "Install the application"
+category = "Install"
+dependencies = [ "sus-release-build" ]
+
+env_files = [
+    { path = "./src/config/install.env" }
+]
+
+script = '''
+    if [ "$(id -u)" -ne 0 ]; then
+        echo "ERROR: Must install as root"
+        exit 1
+    fi
+
+    install \
+        --owner=0 --group=0 \
+        --mode=4755 \
+        --strip \
+        --target-directory="${SUS_INSTALL_PREFIX}/${SUS_INSTALL_DIRECTORY}" \
+        "${CARGO_MAKE_CRATE_TARGET_DIRECTORY}/release/sus"
+'''
+
+
+# Default task is to build in debug mode
+[tasks.default]
+alias = "sus-debug-build-test-flow"
