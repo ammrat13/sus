@@ -2,13 +2,18 @@
 #
 # This workflow will build the package, run all the tests and checks, and save
 # the final binaries as artifacts.
+#
+# Note that this workflow is inherently insecure. It uses actions from untrusted
+# sources, particularly the action to install cargo-make. It might be wise to
+# fix this at some point.
 
 name: Build and Test
-on: push
-#  push:
-#    branches:
-#      - main
-#  pull_request:
+on:
+  push:
+    branches:
+      - main
+      - feature/ci-gha
+  pull_request:
 
 # We only need one job to build and test
 # Sharing data between jobs gives too much overhead
@@ -26,7 +31,9 @@ jobs:
         with:
           toolchain: "1.56.0"
       - name: Install cargo make
-        run: cargo install cargo-make
+        uses: davidB/rust-cargo-make@v1
+        with:
+          version: "0.35.5"
 
       - name: Do the (release) build and test
         run: cargo make sus-release-build
