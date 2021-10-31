@@ -4,11 +4,11 @@
 # the final binaries as artifacts.
 
 name: Build and Test
-on:
-  push:
-    branches:
-      - main
-  pull_request:
+on: push
+#  push:
+#    branches:
+#      - main
+#  pull_request:
 
 # We only need one job to build and test
 # Sharing data between jobs gives too much overhead
