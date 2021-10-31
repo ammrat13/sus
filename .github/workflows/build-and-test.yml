@@ -12,7 +12,6 @@ on:
   push:
     branches:
       - main
-      - feature/ci-gha
   pull_request:
 
 # We only need one job to build and test
