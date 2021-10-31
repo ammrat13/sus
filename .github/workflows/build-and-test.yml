@@ -1,0 +1,46 @@
+# Build-and-Test Github Actions Workflow
+#
+# This workflow will build the package, run all the tests and checks, and save
+# the final binaries as artifacts.
+#
+# Note that this workflow is inherently insecure. It uses actions from untrusted
+# sources, particularly the action to install cargo-make. It might be wise to
+# fix this at some point.
+
+name: Build and Test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+# We only need one job to build and test
+# Sharing data between jobs gives too much overhead
+jobs:
+  build_and_test_job:
+    name: Build and Test Job
+    runs-on: ubuntu-20.04
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: "1.56.0"
+          default: true
+      - name: Install cargo make
+        uses: davidB/rust-cargo-make@v1
+        with:
+          version: "0.35.5"
+
+      - name: Do the (release) build and test
+        run: cargo make sus-release-build
+
+      - name: Capture artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Binaries
+          path: |
+            target/release/sus
