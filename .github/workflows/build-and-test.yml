@@ -3,9 +3,9 @@
 # This workflow will build the package, run all the tests and checks, and save
 # the final binaries as artifacts.
 #
-# Note that this workflow is inherently insecure. It uses actions from untrusted
-# sources, particularly the action to install cargo-make. It might be wise to
-# fix this at some point.
+# TODO: Note that this workflow is inherently insecure. It uses actions from
+# untrusted sources, particularly the action to install cargo-make. It might be
+# wise to fix this at some point.
 
 name: Build and Test
 on:
