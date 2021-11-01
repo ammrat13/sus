@@ -2,13 +2,16 @@
 #
 # This workflow simply exists to push the development image to DockerHub. The
 # username is known, and the password is stored as a secret.
+#
+# TODO: As it stands, the action is using my personal access token for
+# DockerHub. It would be nice to have a dedicated token, but having more than
+# the one costs money. It would be nice to deal with this
 
 name: Push Docker Image
 on:
   push:
     branches:
       - main
-      - feature/dockerfile
     paths:
       - "Dockerfile"
 
