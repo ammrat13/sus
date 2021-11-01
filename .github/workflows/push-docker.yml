@@ -9,8 +9,8 @@ on:
     branches:
       - main
       - feature/dockerfile
-    #paths:
-    #  - "Dockerfile"
+    paths:
+      - "Dockerfile"
 
 # Just the one job to push the image
 jobs:
