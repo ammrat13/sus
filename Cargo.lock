@@ -3,5 +3,14 @@
 version = 3
 
 [[package]]
+name = "libc"
+version = "0.2.106"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a60553f9a9e039a333b4e9b20573b9e9b9c0bb3a11e201ccc48ef4283456d673"
+
+[[package]]
 name = "sus"
 version = "0.0.0"
+dependencies = [
+ "libc",
+]
