@@ -56,11 +56,15 @@ pub type ExecutableFactoryResult = Result<Executable, ExecutableFactoryError>;
 /// When creating an [Executable], functions might run into errors with finding
 /// the parameters needed. This `enum` supplies error codes for the different
 /// possibilities.
-#[allow(dead_code)]
+#[derive(Debug)]
 pub enum ExecutableFactoryError {
     /// Path could not be located
     PathNotFound,
+
     /// Required command line argument could not be located. The `position` is
     /// the zero-indexed number of the command line argument.
     ArgNotFound { position: usize },
+    // Comamnd line argument couldn't be parsed. The `position` is
+    /// the zero-indexed number of the command line argument.
+    ArgMalformed { position: usize },
 }
