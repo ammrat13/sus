@@ -6,6 +6,7 @@
 //! working `sudo`.
 
 mod config;
+mod executable;
 
 /// Main method for the kernel
 ///
