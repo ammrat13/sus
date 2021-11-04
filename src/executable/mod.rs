@@ -12,6 +12,9 @@
 //! user. It has various functions to get it from command line arguments, from
 //! iterables, or from a presupplied structure.
 
+pub mod iterator;
+pub use iterator::from_iterator;
+
 use std::ffi::CString;
 use std::path::PathBuf;
 
@@ -40,9 +43,19 @@ pub struct Executable {
 /// The [main](crate::main) function can use [AutoExecutableFactory]s
 /// during runtime to create [Executable]s.
 #[allow(dead_code)]
-pub type AutoExecutableFactory = fn() -> Result<Executable, ExecutableFactoryError>;
+pub type AutoExecutableFactory = fn() -> ExecutableFactoryResult;
 
-/// Error
+/// Convinience type for the result of an [Executable] factory
+///
+/// Creating an [Executable] may succeed or may fail. A [Result] is thus
+/// returned with the status. For convinience, this type aliases to the result.
+pub type ExecutableFactoryResult = Result<Executable, ExecutableFactoryError>;
+
+/// Error for [Executable] factories
+///
+/// When creating an [Executable], functions might run into errors with finding
+/// the parameters needed. This `enum` supplies error codes for the different
+/// possibilities.
 #[allow(dead_code)]
 pub enum ExecutableFactoryError {
     /// Path could not be located
