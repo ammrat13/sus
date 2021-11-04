@@ -8,10 +8,6 @@
 mod config;
 mod lib;
 
-use std::boxed::Box;
-use std::panic;
-use std::process;
-
 /// Main method for the kernel
 ///
 /// This is the main method for the SUS kernel. As is standard practice in Rust,
@@ -23,9 +19,7 @@ use std::process;
 fn main() {
     // Set up a panic handler
     // This way, we don't give any information
-    panic::set_hook(Box::new(|_| {
-        process::exit(1);
+    std::panic::set_hook(Box::new(|_| {
+        std::process::exit(1);
     }));
-
-    panic!("sdnkfn");
 }
