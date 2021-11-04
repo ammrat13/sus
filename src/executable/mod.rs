@@ -39,4 +39,4 @@ pub struct Executable {
 ///
 /// The [main](crate::main) function can use [AutoExecutableFactory]s
 /// during runtime to create [Executable]s.
-type AutoExecutableFactory = fn () -> Executable;
+type AutoExecutableFactory = fn() -> Executable;
