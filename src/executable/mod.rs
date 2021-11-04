@@ -5,8 +5,8 @@
 //! information.
 //!
 //! At its core, this module has an [Executable] structure, which contains the
-//! absolute path to the file to execute, as well as a [Vec] of command line
-//! arguments to supply.
+//! path to the file to execute, as well as a [Vec] of command line arguments to
+//! supply.
 //!
 //! Additionally, the module has methods for getting the [Executable] from the
 //! user. It has various functions to get it from command line arguments, from
@@ -17,8 +17,8 @@ use std::path::PathBuf;
 
 /// Structure representing an executable program
 ///
-/// It holds the absolute path of the program to be executed, as well as the
-/// comamnd line arguments to pass it.
+/// It holds the path of the program to be executed, as well as the comamnd line
+/// arguments to pass it.
 #[derive(Debug, Clone)]
 pub struct Executable {
     /// The path to the executable
@@ -39,4 +39,15 @@ pub struct Executable {
 ///
 /// The [main](crate::main) function can use [AutoExecutableFactory]s
 /// during runtime to create [Executable]s.
-type AutoExecutableFactory = fn() -> Executable;
+#[allow(dead_code)]
+pub type AutoExecutableFactory = fn() -> Result<Executable, ExecutableFactoryError>;
+
+/// Error
+#[allow(dead_code)]
+pub enum ExecutableFactoryError {
+    /// Path could not be located
+    PathNotFound,
+    /// Required command line argument could not be located. The `position` is
+    /// the zero-indexed number of the command line argument.
+    ArgNotFound { position: usize },
+}
