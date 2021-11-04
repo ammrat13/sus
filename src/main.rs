@@ -6,13 +6,12 @@
 //! working `sudo`.
 
 mod config;
-mod lib;
 
 /// Main method for the kernel
 ///
 /// This is the main method for the SUS kernel. As is standard practice in Rust,
-/// most of the work is done by an internal library, and this function simply
-/// calls into that library.
+/// most of the work is done by internal libraries, and this function simply
+/// calls into those libraries.
 ///
 /// Note that this function does not return a [Result]. This is intentional. We
 /// want this function to just panic and not print any debugging output.
