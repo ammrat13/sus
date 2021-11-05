@@ -1,11 +1,11 @@
-//! Configuration variables for SUS
+//! Configuration variables for the SUS Kernel
 //!
-//! This file contains some configuration variables for the SUS application. It
+//! This file contains some configuration variables for the SUS kernel. It
 //! defines constants that are to be compiled into the final binary.
 //!
-//! Make sure to edit this file in `config/build.rs`. This file is copied to the
-//! `src/` directory as part of the build process. Any changes made there will
-//! be ignored by `cargo build`.
+//! Make sure to edit this file in `config/`. This file is copied to the `src/`
+//! directory as part of the build process. Any changes made there will be
+//! ignored by `cargo build`.
 
 #![allow(dead_code)]
 

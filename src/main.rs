@@ -1,4 +1,4 @@
-//! SUS kernel
+//! SUS Kernel
 //!
 //! This is an experiment with making as much of `sudo` run unprivileged as
 //! possible. The goal is to run "Sudo in UserSpace." As such, this binary is
