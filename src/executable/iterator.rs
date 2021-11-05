@@ -3,7 +3,7 @@
 //! This module implements a method to parse an [Executable] using an [Iterator]
 //! object. This functionality can be useful when parsing command line
 //! arguments, as those can be turned into an [Iterator] easily. It also works
-//! on generic [Vec]s for the same reason.
+//! on generic [Vec]s for the same reason, which is useful for testing.
 
 use super::Executable;
 use super::ExecutableFactoryError;
