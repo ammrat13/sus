@@ -44,7 +44,6 @@ pub struct Executable {
 ///
 /// The [main](crate::main) function can use [AutoExecutableFactory]s
 /// during runtime to create [Executable]s.
-#[allow(dead_code)]
 pub type AutoExecutableFactory = fn() -> ExecutableFactoryResult;
 
 /// Convinience type for the result of an [Executable] factory

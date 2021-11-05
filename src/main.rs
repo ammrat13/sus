@@ -22,8 +22,4 @@ fn main() {
     std::panic::set_hook(Box::new(|_| {
         std::process::exit(1);
     }));
-
-    let x: usize = 0;
-    let e = executable::from_iterator(vec!["a", "b", "c"].iter(), x, 1);
-    println!("{:?}", e);
 }
