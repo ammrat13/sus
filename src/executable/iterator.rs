@@ -53,7 +53,10 @@ where
                 ss.iter().map(|s| CString::new(s.as_ref())).collect();
             // If any one failed, return an error
             match rs.iter().position(|r| r.is_err()) {
-                Some(i) => Err(ExecutableFactoryError::ArgMalformed { position: i }),
+                Some(i) => Err(ExecutableFactoryError::ArgMalformed {
+                    position: i,
+                    content: ss.get(i).unwrap().as_ref().to_string(),
+                }),
                 None => Ok(rs
                     .into_iter()
                     .collect::<Result<Vec<CString>, NulError>>()
