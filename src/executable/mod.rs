@@ -12,7 +12,9 @@
 //! user. It has various functions to get it from command line arguments, from
 //! iterables, or from a presupplied structure.
 
+pub mod commandline;
 pub mod iterator;
+pub use commandline::from_commandline;
 pub use iterator::from_iterator;
 
 use std::ffi::CString;
@@ -61,9 +63,6 @@ pub enum ExecutableFactoryError {
     /// Path could not be located
     PathNotFound,
 
-    /// Required command line argument could not be located. The `position` is
-    /// the zero-indexed number of the command line argument.
-    ArgNotFound { position: usize },
     // Comamnd line argument couldn't be parsed. The `position` is
     /// the zero-indexed number of the command line argument.
     ArgMalformed { position: usize },
