@@ -7,6 +7,7 @@
 
 mod config;
 mod executable;
+mod permission;
 
 /// Main method for the kernel
 ///

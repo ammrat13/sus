@@ -9,7 +9,7 @@ use super::Executable;
 use super::ExecutableFactoryError;
 use super::ExecutableFactoryResult;
 
-use std::ffi::{CString, NulError};
+use std::ffi::CString;
 use std::path::PathBuf;
 
 /// Function to make an [Executable] from an [Iterator]
@@ -49,18 +49,14 @@ where
     let args: Vec<CString> = match args.get(args_start_idx..) {
         Some(ss) => {
             // Try to convert everything to a CString
-            let rs: Vec<Result<CString, NulError>> =
-                ss.iter().map(|s| CString::new(s.as_ref())).collect();
+            let rs: Vec<_> = ss.iter().map(|s| CString::new(s.as_ref())).collect();
             // If any one failed, return an error
             match rs.iter().position(|r| r.is_err()) {
                 Some(i) => Err(ExecutableFactoryError::ArgMalformed {
                     position: i,
-                    content: ss.get(i).unwrap().as_ref().to_string(),
+                    content: ss[i].as_ref().to_string(),
                 }),
-                None => Ok(rs
-                    .into_iter()
-                    .collect::<Result<Vec<CString>, NulError>>()
-                    .unwrap()),
+                None => Ok(rs.into_iter().collect::<Result<_, _>>().unwrap()),
             }
         }
         None => Ok(Vec::new()),
