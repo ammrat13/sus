@@ -16,7 +16,8 @@ use std::collections::HashSet;
 ///
 /// This function will consume the [Iterator] it's given and parse particular
 /// indicies to determine the UID, Primary GID, and Secondary GIDs. The indicies
-/// it looks at are passed as parameters.
+/// it looks at are passed as the parameters `uid_idx`, `gid1_idx`, and
+/// `gid2_idx` respectively.
 ///
 /// For parsing, it expects the UID and Primary GID to be base-10 strings. It
 /// expects the list of Secondary GIDs to be a comma separated list of base-10
