@@ -8,7 +8,9 @@
 //! them from various sources. It's tied to the Unix permission model, where
 //! each user has a user id, a group id, and a list of secondary group ids.
 
+pub mod commandline;
 pub mod iterator;
+pub use commandline::from_commandline;
 pub use iterator::from_iterator;
 
 use libc::{gid_t, uid_t};

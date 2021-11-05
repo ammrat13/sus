@@ -10,20 +10,46 @@
 #![allow(dead_code)]
 
 use crate::executable;
+use crate::permission;
 use crate::executable::AutoExecutableFactory;
+use crate::permission::AutoPermissionFactory;
 
 /// The method to use to find the [Executable][eb] to run
 ///
 /// [eb]: executable::Executable
 pub const EXECUTABLE_FACTORY: AutoExecutableFactory = executable::from_commandline;
 
+/// The method to use to find the [Permission][p]s to run the executable as
+///
+/// This is the target [Permission][p]s of the [Executable][eb]. As such, it is
+/// perfectly safe to take this in from the user. Indeed, the user must be able
+/// to execute as a requested privilege.
+///
+/// [p]: permission::Permission
+/// [eb]: executable::Executable
+pub const TARGET_PERMISSION_FACTORY: AutoPermissionFactory = permission::from_commandline;
+
 /// What command line argument number to look for for the path of the binary to
 /// execute
 ///
-/// Used by [executable::from_commandline].
-pub const EXECUTABLE_COMMANDLINE_PATH_IDX: usize = 0;
+/// Used by [executable::from_commandline]
+pub const EXECUTABLE_COMMANDLINE_PATH_IDX: usize = 4;
 /// What command line argument number to use as the first parameter to the
 /// program, with subsequent arguments being used in order
 ///
-/// Used by [executable::from_commandline].
-pub const EXECUTABLE_COMMANDLINE_ARG_START_IDX: usize = 1;
+/// Used by [executable::from_commandline]
+pub const EXECUTABLE_COMMANDLINE_ARG_START_IDX: usize = 5;
+
+/// What command line argument number to look at for the UID
+///
+/// Used by [permission::from_commandline]
+pub const PERMISSION_COMMANDLINE_UID_IDX: usize = 1;
+/// What command line argument number to look at for the Primary GID
+///
+/// Used by [permission::from_commandline]
+pub const PERMISSION_COMMANDLINE_PRIMARY_GID_IDX: usize = 2;
+/// What command line argument number to look at for a comma separated list of
+/// the Secondary GIDs.
+///
+/// Used by [permission::from_commandline]
+pub const PERMISSION_COMMANDLINE_SECONDARY_GID_IDX: usize = 3;
