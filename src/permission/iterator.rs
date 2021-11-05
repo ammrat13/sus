@@ -26,7 +26,6 @@ use std::collections::HashSet;
 /// The function will return the created [Permission], or a
 /// [PermissionFactoryError] if it was not able to find and parse the
 /// components.
-#[allow(dead_code)]
 pub fn from_iterator<I, S>(
     it: I,
     uid_idx: usize,
