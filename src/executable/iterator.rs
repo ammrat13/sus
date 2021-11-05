@@ -14,7 +14,7 @@ use std::path::PathBuf;
 
 /// Function to make an [Executable] from an [Iterator]
 ///
-/// This function will consume the iterator it's given, and look at particular
+/// This function will consume the [Iterator] it's given, and look at particular
 /// indices of it to determine the path and the arguments to pass to the
 /// executable. In particular, it looks at:
 ///   * `path_idx` to find the index of the iterator to go to for the path
