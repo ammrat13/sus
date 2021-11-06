@@ -9,7 +9,7 @@ use super::Permission;
 use super::PermissionFactoryError;
 use super::PermissionFactoryResult;
 
-use libc::{gid_t, uid_t};
+use nix::unistd::{Gid, Uid};
 use std::collections::HashSet;
 
 /// Function to make a [Permission] from an [Iterator]
@@ -41,53 +41,73 @@ where
 
     // Get the UID
     // Note the question mark at the end to unwrap
-    let uid: uid_t = match args.get(uid_idx) {
+    let uid: Uid = match args.get(uid_idx) {
+        None => Err(PermissionFactoryError::UIDNotFound),
         Some(s) => {
             // Convert to a &str for ease of use
             let s_ref = s.as_ref();
+
+            // Get the error to return
+            // For readability - we may not always return this
+            let err_ret = PermissionFactoryError::UIDMalformed {
+                content: s_ref.to_string(),
+            };
+
             // Try to parse
-            let parse_result = str::parse(s_ref);
-            // Handle errors if they arise
-            parse_result.map_err(|_| PermissionFactoryError::UIDMalformed {
-                content: s.as_ref().to_string(),
-            })
+            // If it succeeds, convert to a Uid object
+            // If it fails, handle that
+            str::parse(s_ref)
+                .map(|u| Uid::from_raw(u))
+                .map_err(|_| err_ret)
         }
-        None => Err(PermissionFactoryError::UIDNotFound),
     }?;
 
     // Get the Primary GID with the same strategy
-    let primary_gid: gid_t = match args.get(gid1_idx) {
+    let primary_gid: Gid = match args.get(gid1_idx) {
+        None => Err(PermissionFactoryError::PrimaryGIDNotFound),
         Some(s) => {
             let s_ref = s.as_ref();
-            let parse_result = str::parse(s_ref);
-            parse_result.map_err(|_| PermissionFactoryError::PrimaryGIDMalformed {
-                content: s.as_ref().to_string(),
-            })
+            let err_ret = PermissionFactoryError::PrimaryGIDMalformed {
+                content: s_ref.to_string(),
+            };
+            str::parse(s_ref)
+                .map(|g| Gid::from_raw(g))
+                .map_err(|_| err_ret)
         }
-        None => Err(PermissionFactoryError::PrimaryGIDNotFound),
     }?;
 
     // Parse the list of secondary GIDs
     // Split on commas, and parse everything else as integers
-    let secondary_gids: HashSet<gid_t> = match args.get(gid2_idx) {
+    let secondary_gids: HashSet<Gid> = match args.get(gid2_idx) {
+        None => Err(PermissionFactoryError::SecondaryGIDNotFound),
         Some(s) => {
             // Convert to a &str for ease of use
-            // Also split it and collect it into a vector
             let s_ref = s.as_ref();
+
+            // Split the string and collect it into a vector
             let s_spl: Vec<_> = s_ref.split(',').collect();
-            // Try to convert each of them to a GID
-            let gs: Vec<_> = s_spl.iter().map(|c| str::parse::<gid_t>(c)).collect();
+
+            // Try to convert each of them to a gid_t
+            let gs_r: Vec<_> = s_spl.iter().map(|c| str::parse(c)).collect();
+
             // If any one failed, return an error
-            match gs.iter().position(|g| g.is_err()) {
-                Some(i) => Err(PermissionFactoryError::SecondaryGIDMalformed {
-                    content: s_spl[i].to_string(),
-                }),
-                None => Ok(HashSet::from_iter(
-                    gs.into_iter().collect::<Result<Vec<gid_t>, _>>().unwrap(),
-                )),
-            }
+            match gs_r.iter().position(|g_r| g_r.is_err()) {
+                None => (),
+                Some(i) => {
+                    return Err(PermissionFactoryError::SecondaryGIDMalformed {
+                        content: s_spl[i].to_string(),
+                    })
+                }
+            };
+
+            // Otherwise, everything succeeded
+            // Unwrap everything
+            // Convert them into Gids
+            Ok(gs_r
+                .into_iter()
+                .map(|g_r| Gid::from_raw(g_r.unwrap()))
+                .collect())
         }
-        None => Err(PermissionFactoryError::SecondaryGIDNotFound),
     }?;
 
     Ok(Permission {

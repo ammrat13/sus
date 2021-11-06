@@ -3,6 +3,5 @@ name = "sus"
 version = "0.0.0"
 edition = "2021"
 
-# TODO: Change to `nix`
 [dependencies]
-libc = "0.2.106"
+nix = "0.23.0"

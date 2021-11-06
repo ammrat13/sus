@@ -6,9 +6,9 @@
 //!
 //! [eve]: https://man7.org/linux/man-pages/man2/execve.2.html
 
-use crate::permission::Permission;
 use super::Executable;
 use super::RunResult;
+use crate::permission::Permission;
 
 /// Function that calls [execve][eve] to run the [Executable] given
 ///

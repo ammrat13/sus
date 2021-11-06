@@ -11,7 +11,7 @@
 pub mod factory;
 pub mod verify;
 
-use libc::{gid_t, uid_t};
+use nix::unistd::{Gid, Uid};
 use std::collections::HashSet;
 
 /// Structure representing a permission set
@@ -22,10 +22,10 @@ use std::collections::HashSet;
 #[derive(Debug, Clone)]
 pub struct Permission {
     /// The user id
-    uid: uid_t,
+    uid: Uid,
     /// The primary group id
-    primary_gid: gid_t,
+    primary_gid: Gid,
     /// A set of secondary group ids, which may or may not contain the primary
     /// group id itself
-    secondary_gids: HashSet<gid_t>,
+    secondary_gids: HashSet<Gid>,
 }
