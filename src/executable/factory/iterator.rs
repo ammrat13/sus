@@ -5,7 +5,7 @@
 //! arguments, as those can be turned into an [Iterator] easily. It also works
 //! on generic [Vec]s for the same reason, which is useful for testing.
 
-use super::Executable;
+use super::super::Executable;
 use super::ExecutableFactoryError;
 use super::ExecutableFactoryResult;
 
