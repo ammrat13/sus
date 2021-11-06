@@ -10,7 +10,6 @@ use super::ExecutableFactoryError;
 use super::ExecutableFactoryResult;
 
 use std::ffi::CString;
-use std::path::PathBuf;
 
 /// Function to make an [Executable] from an [Iterator]
 ///
@@ -39,14 +38,24 @@ where
 
     // Get the path to return
     // Note the question mark at the end
-    let path: PathBuf = match args.get(path_idx) {
-        Some(s) => Ok(PathBuf::from(s.as_ref())),
+    let path: CString = match args.get(path_idx) {
         None => Err(ExecutableFactoryError::PathNotFound),
+        Some(s) => {
+            // Convert to &str for convinience
+            let s_ref = s.as_ref();
+            // Do the conversion
+            let res = CString::new(s.as_ref());
+            // Return
+            res.map_err(|_| ExecutableFactoryError::PathMalformed {
+                content: s_ref.to_string(),
+            })
+        }
     }?;
 
-    // Get the arguments
+    // Get the arguments, or an empty vector if they couldn't be found
     // Note the question mark at the end
     let args: Vec<CString> = match args.get(args_start_idx..) {
+        None => Ok(Vec::new()),
         Some(ss) => {
             // Try to convert everything to a CString
             let rs: Vec<_> = ss.iter().map(|s| CString::new(s.as_ref())).collect();
@@ -59,7 +68,6 @@ where
                 None => Ok(rs.into_iter().collect::<Result<_, _>>().unwrap()),
             }
         }
-        None => Ok(Vec::new()),
     }?;
 
     Ok(Executable { path, args })

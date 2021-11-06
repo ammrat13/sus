@@ -16,7 +16,6 @@ pub mod factory;
 pub mod run;
 
 use std::ffi::CString;
-use std::path::PathBuf;
 
 /// Structure representing an executable program
 ///
@@ -25,7 +24,7 @@ use std::path::PathBuf;
 #[derive(Debug, Clone)]
 pub struct Executable {
     /// The path to the executable
-    path: PathBuf,
+    pub path: CString,
     /// The command line arguments to pass to the executable
-    args: Vec<CString>,
+    pub args: Vec<CString>,
 }

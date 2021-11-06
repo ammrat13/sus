@@ -9,6 +9,7 @@ pub use exec::exec;
 use super::Executable;
 use crate::permission::Permission;
 
+use nix::errno::Errno;
 use std::convert::Infallible;
 
 /// Type for functions that run [Executable]s
@@ -32,6 +33,26 @@ pub type AbstractRunner = dyn FnMut(&Permission, &Executable) -> RunResult;
 /// [Runner]s never return. If they return, they always return in error. As
 /// such, the [Ok](Result::Ok) branch of this type is [Infallible] and cannot be
 /// explicitly constructed.
+pub type RunResult = Result<Infallible, RunError>;
+
+/// Error for [Runner]s
 ///
-/// TODO: Change the error type
-pub type RunResult = Result<Infallible, ()>;
+/// Ideally, [Runner]s never return. If they return, they always return in
+/// error. This type enumerates the types of errors that can occur. Essentially,
+/// any one of the system calls required can fail.
+///
+/// If any one of these errors are returned, the application should be taken to
+/// be in an indeterminate state. There is no easy way to roll back a system
+/// call. As such, the appropriate course of action is to terminate the
+/// application as soon as possible.
+pub enum RunError {
+    /// An error occurred when setting the UID of the process
+    SetUID { errno: Errno },
+    /// An error occurred when setting the Primary GID of the process
+    SetPrimaryGID { errno: Errno },
+    /// An error occurred when seting the Secondary GIDs of the process
+    SetSecondaryGID { errno: Errno },
+
+    /// An error occured when attempting to change to the target binary
+    Execute { errno: Errno },
+}

@@ -41,14 +41,16 @@ pub type ExecutableFactoryResult = Result<Executable, ExecutableFactoryError>;
 /// the parameters needed. This `enum` supplies error codes for the different
 /// possibilities.
 ///
-/// Notice that a path cannot be malformed - it's just a string. Moreover, no
-/// arguments being found isn't an error - it just means the process will be
-/// created with no arguments. As such, those possibilities are not present
-/// here.
+/// Notice that no arguments being found isn't an error - it just means the
+/// process will be created with no arguments. As such, that possibiliy isn't
+/// present here. It is possible, however, for the path to be malformed. It has
+/// to be parsed to a CString, and that may fail.
 #[derive(Debug)]
 pub enum ExecutableFactoryError {
     /// Path could not be located
     PathNotFound,
+    /// Path is not a valid C String and has a null byte in the middle
+    PathMalformed { content: String },
 
     /// Comamnd line argument couldn't be parsed. The `position` is
     /// the zero-indexed number of the command line argument that failed, and

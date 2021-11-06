@@ -22,10 +22,10 @@ use std::collections::HashSet;
 #[derive(Debug, Clone)]
 pub struct Permission {
     /// The user id
-    uid: Uid,
+    pub uid: Uid,
     /// The primary group id
-    primary_gid: Gid,
+    pub primary_gid: Gid,
     /// A set of secondary group ids, which may or may not contain the primary
     /// group id itself
-    secondary_gids: HashSet<Gid>,
+    pub secondary_gids: HashSet<Gid>,
 }
