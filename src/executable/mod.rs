@@ -13,6 +13,7 @@
 //! iterables.
 
 pub mod factory;
+pub mod run;
 
 use std::ffi::CString;
 use std::path::PathBuf;

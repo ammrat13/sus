@@ -12,6 +12,7 @@
 use crate::executable;
 use crate::permission;
 use crate::executable::factory::AutoExecutableFactory;
+use crate::executable::run::Runner;
 use crate::permission::factory::AutoPermissionFactory;
 use crate::permission::verify::Verifier;
 
@@ -48,6 +49,11 @@ pub const TARGET_PERMISSION_FACTORY: AutoPermissionFactory = permission::factory
 pub const VERIFICATIONS: &[Verifier] = &[
     permission::verify::succeed,
 ];
+
+/// The method to run the [Executable][eb] created
+///
+/// [eb]: executable::Executable
+pub const RUNNER: Runner = executable::run::exec;
 
 /// What command line argument number to look for for the path of the binary to
 /// execute
