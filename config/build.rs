@@ -19,6 +19,15 @@ use crate::permission::AutoPermissionFactory;
 /// [eb]: executable::Executable
 pub const EXECUTABLE_FACTORY: AutoExecutableFactory = executable::from_commandline;
 
+/// The method to use to find the current [Permission][p]s the user has
+///
+/// Note that this is the current [Permission][p]s this binary is executing
+/// under. For this reason, the user should not be trusted to provide this. It
+/// should be obtained by other means, like looking at the Real UID, Real
+/// Primary GID, and Secondary Groups.
+///
+/// [p]: permission::Permission
+pub const SOURCE_PERMISSION_FACTORY: AutoPermissionFactory = permission::from_environment;
 /// The method to use to find the [Permission][p]s to run the executable as
 ///
 /// This is the target [Permission][p]s of the [Executable][eb]. As such, it is
