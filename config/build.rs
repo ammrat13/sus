@@ -13,6 +13,7 @@ use crate::executable;
 use crate::permission;
 use crate::executable::factory::AutoExecutableFactory;
 use crate::permission::factory::AutoPermissionFactory;
+use crate::permission::verify::Verifier;
 
 /// The method to use to find the [Executable][eb] to run
 ///
@@ -37,6 +38,16 @@ pub const SOURCE_PERMISSION_FACTORY: AutoPermissionFactory = permission::factory
 /// [p]: permission::Permission
 /// [eb]: executable::Executable
 pub const TARGET_PERMISSION_FACTORY: AutoPermissionFactory = permission::factory::from_commandline;
+
+/// An array of all the [Verifier]s to invoke
+///
+/// We might want multiple checks to pass before running [Executable][eb]. This
+/// is a list of all the checks that have to pass.
+///
+/// [eb]: executable::Executable
+pub const VERIFICATIONS: &[Verifier] = &[
+    permission::verify::succeed,
+];
 
 /// What command line argument number to look for for the path of the binary to
 /// execute

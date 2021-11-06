@@ -9,6 +9,7 @@
 //! each user has a user id, a group id, and a list of secondary group ids.
 
 pub mod factory;
+pub mod verify;
 
 use libc::{gid_t, uid_t};
 use std::collections::HashSet;
