@@ -43,6 +43,12 @@ extern "C" {
 /// fail, and a lot of work needs to be done to deal with the failures. It also
 /// returns a list into a parameter, and that takes some work. The [getuid] and
 /// [getgid] functions are much easier to work with - just a single call.
+///
+/// The only error this function can raise has to do with finding the Secondary
+/// GIDs. If any of the calls to [getgroups] fail, this function will return a
+/// [SecondaryGIDNotFound][sgnf] error. It succeeds otherwise.
+///
+/// [sgnf]: PermissionFactoryError::SecondaryGIDNotFound
 pub fn from_environment() -> PermissionFactoryResult {
     // Get the number of secondary groups
     // Check for and fail on error

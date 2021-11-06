@@ -37,6 +37,12 @@ pub type AutoPermissionFactory = fn() -> PermissionFactoryResult;
 /// with the status. For convinience, this type aliases to the result.
 pub type PermissionFactoryResult = Result<Permission, PermissionFactoryError>;
 
+/// Error for [Permission] factories
+///
+/// When creating [Permission]s, functions might run into errors with finding
+/// the parameters needed. This `enum` supplies error codes for the different
+/// possibilities. Any one of the components might not be found, or might not be
+/// parseable.
 #[derive(Debug)]
 pub enum PermissionFactoryError {
     /// UID could not be located

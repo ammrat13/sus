@@ -51,14 +51,14 @@ pub const EXECUTABLE_COMMANDLINE_ARG_START_IDX: usize = 5;
 
 /// What command line argument number to look at for the UID
 ///
-/// Used by [permission::from_commandline]
+/// Used by [permission::factory::from_commandline]
 pub const PERMISSION_COMMANDLINE_UID_IDX: usize = 1;
 /// What command line argument number to look at for the Primary GID
 ///
-/// Used by [permission::from_commandline]
+/// Used by [permission::factory::from_commandline]
 pub const PERMISSION_COMMANDLINE_PRIMARY_GID_IDX: usize = 2;
 /// What command line argument number to look at for a comma separated list of
 /// the Secondary GIDs.
 ///
-/// Used by [permission::from_commandline]
+/// Used by [permission::factory::from_commandline]
 pub const PERMISSION_COMMANDLINE_SECONDARY_GID_IDX: usize = 3;
