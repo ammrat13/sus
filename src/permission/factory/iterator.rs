@@ -56,9 +56,7 @@ where
             // Try to parse
             // If it succeeds, convert to a Uid object
             // If it fails, handle that
-            str::parse(s_ref)
-                .map(|u| Uid::from_raw(u))
-                .map_err(|_| err_ret)
+            str::parse(s_ref).map(Uid::from_raw).map_err(|_| err_ret)
         }
     }?;
 
@@ -70,9 +68,7 @@ where
             let err_ret = PermissionFactoryError::PrimaryGIDMalformed {
                 content: s_ref.to_string(),
             };
-            str::parse(s_ref)
-                .map(|g| Gid::from_raw(g))
-                .map_err(|_| err_ret)
+            str::parse(s_ref).map(Gid::from_raw).map_err(|_| err_ret)
         }
     }?;
 
@@ -91,7 +87,7 @@ where
             let gs_r: Vec<_> = s_spl.iter().map(|c| str::parse(c)).collect();
 
             // If any one failed, return an error
-            match gs_r.iter().position(|g_r| g_r.is_err()) {
+            match gs_r.iter().position(Result::is_err) {
                 None => (),
                 Some(i) => {
                     return Err(PermissionFactoryError::SecondaryGIDMalformed {
