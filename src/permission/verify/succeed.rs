@@ -10,6 +10,6 @@ use super::VerifyResult;
 use crate::executable::Executable;
 
 /// Function that always passes verification
-pub fn succeed(_: Permission, _: Permission, _: Executable) -> VerifyResult {
+pub fn succeed(_: &Permission, _: &Permission, _: &Executable) -> VerifyResult {
     Ok(())
 }

@@ -19,7 +19,7 @@ use std::error::Error;
 /// the [Permission] they request and the [Executable] the user wishes to run.
 /// They should then return a [VerifyResult] signalling whether the user is
 /// allowed to run it.
-pub type Verifier = fn(Permission, Permission, Executable) -> VerifyResult;
+pub type Verifier = fn(&Permission, &Permission, &Executable) -> VerifyResult;
 /// Abstract supertype of [Verifier]
 ///
 /// For testing purposes, we might want to have [Verifier]s signal other parts
@@ -27,7 +27,7 @@ pub type Verifier = fn(Permission, Permission, Executable) -> VerifyResult;
 /// create variables with it. However, it will work for automatically generated
 /// closures.
 #[allow(dead_code)]
-pub type AbstractVerifier = dyn FnMut(Permission, Permission, Executable) -> VerifyResult;
+pub type AbstractVerifier = dyn FnMut(&Permission, &Permission, &Executable) -> VerifyResult;
 
 /// Convinience type for the result of a [Verifier]
 ///
