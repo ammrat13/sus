@@ -49,6 +49,7 @@ extern "C" {
 /// [SecondaryGIDNotFound][sgnf] error. It succeeds otherwise.
 ///
 /// [sgnf]: PermissionFactoryError::SecondaryGIDNotFound
+#[allow(dead_code)]
 pub fn from_environment() -> PermissionFactoryResult {
     // Get the number of secondary groups
     // Check for and fail on error
