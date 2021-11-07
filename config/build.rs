@@ -50,9 +50,7 @@ pub const REQUESTED_PERMISSION_FACTORY: AutoPermissionFactory = permission::fact
 /// is empty, the [Executable][eb] will be run unconditionally.
 ///
 /// [eb]: executable::Executable
-pub const VERIFIERS: &[Verifier] = &[
-    permission::verify::f
-];
+pub const VERIFIERS: &[Verifier] = &[];
 
 /// The method to run the [Executable][eb] created
 ///

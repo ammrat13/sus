@@ -47,7 +47,3 @@ pub enum VerifyError {
     /// Some component needed for verification could not be parsed
     Malformed { err: Box<dyn Error> },
 }
-
-pub fn f(_: &Permission, _: &Permission, _: &Executable) -> VerifyResult {
-    Ok(())
-}

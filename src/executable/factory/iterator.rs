@@ -55,8 +55,14 @@ where
     // Get the arguments, or an empty vector if they couldn't be found
     // Note the question mark at the end
     let args: Vec<CString> = match args.get(args_start_idx..) {
-        None => Ok(Vec::new()),
+        None => Err(ExecutableFactoryError::ArgNotFound),
         Some(ss) => {
+            // For some reason, get allows the resulting vector to be empty
+            // Check for that
+            if ss.is_empty() {
+                return Err(ExecutableFactoryError::ArgNotFound);
+            }
+
             // Try to convert everything to a CString
             let rs: Vec<_> = ss.iter().map(|s| CString::new(s.as_ref())).collect();
             // If any one failed, return an error

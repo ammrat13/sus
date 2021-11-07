@@ -41,12 +41,11 @@ pub type ExecutableFactoryResult = Result<Executable, ExecutableFactoryError>;
 /// the parameters needed. This `enum` supplies error codes for the different
 /// possibilities.
 ///
-/// Notice that no arguments being found isn't an error - it just means the
-/// process will be created with no arguments. As such, that possibiliy isn't
-/// present here. It is possible, however, for the path to be malformed. It has
-/// to be parsed to a CString, and that may fail.
+/// Notice that finding no arguments is an error. Calling `exec` with no command
+/// line arguments is an error. It's also possible for the path to be malformed.
+/// It might be that it can't be parsed as a [CString][cs].
 ///
-/// TODO: Make it impossible to pass zero arguments. This will panic `execve`.
+/// [cs]: std::ffi::CString
 #[derive(Debug)]
 pub enum ExecutableFactoryError {
     /// Path could not be located
@@ -54,6 +53,8 @@ pub enum ExecutableFactoryError {
     /// Path is not a valid C String and has a null byte in the middle
     PathMalformed { content: String },
 
+    /// No command line arguments were found
+    ArgNotFound,
     /// Comamnd line argument couldn't be parsed. The `position` is
     /// the zero-indexed number of the command line argument that failed, and
     /// `content` is the content of the string.
