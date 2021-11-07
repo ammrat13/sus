@@ -45,6 +45,8 @@ pub type ExecutableFactoryResult = Result<Executable, ExecutableFactoryError>;
 /// process will be created with no arguments. As such, that possibiliy isn't
 /// present here. It is possible, however, for the path to be malformed. It has
 /// to be parsed to a CString, and that may fail.
+///
+/// TODO: Make it impossible to pass zero arguments. This will panic `execve`.
 #[derive(Debug)]
 pub enum ExecutableFactoryError {
     /// Path could not be located
