@@ -10,6 +10,7 @@ mod executable;
 mod permission;
 mod request;
 
+use permission::verify::AbstractVerifier;
 use request::Request;
 
 /// Main method for the kernel
@@ -41,15 +42,20 @@ fn main() {
         // Do the clone
         let mut vfers = Vec::new();
         vfers.extend_from_slice(config::VERIFIERS);
-        // Return
+        // Create and return
+        // Box everything up as well
+        // See: https://newbedev.com/how-to-create-a-vector-of-boxed-closures-in-rust
         vfers
+            .into_iter()
+            .map(|f| Box::new(f) as Box<AbstractVerifier>)
+            .collect()
     };
 
     let req = Request {
         executable,
         current_permissions,
         requested_permissions,
-        verifiers: Vec::from_iter(verifiers.into_iter().map(Box::new)),
+        verifiers,
         runner,
     };
     req.service().unwrap();
