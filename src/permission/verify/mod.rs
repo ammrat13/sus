@@ -5,9 +5,6 @@
 //! that might need to be performed. This module holds the methods for doing
 //! that. It also defines common types for verification.
 
-pub mod succeed;
-pub use succeed::succeed;
-
 use super::Permission;
 use crate::executable::Executable;
 
@@ -26,7 +23,6 @@ pub type Verifier = fn(&Permission, &Permission, &Executable) -> VerifyResult;
 /// of the code. This trait allows for that. Since it's a `dyn` type, we can't
 /// create variables with it. However, it will work for automatically generated
 /// closures.
-#[allow(dead_code)]
 pub type AbstractVerifier = dyn FnMut(&Permission, &Permission, &Executable) -> VerifyResult;
 
 /// Convinience type for the result of a [Verifier]
@@ -42,6 +38,7 @@ pub type VerifyResult = Result<(), VerifyError>;
 /// that the user has credentials due to a system error. This `enum` provides
 /// some possibilities.
 #[allow(dead_code)]
+#[derive(Debug)]
 pub enum VerifyError {
     /// The user is not allowed to run the [Executable]
     NotAllowed,
@@ -49,4 +46,8 @@ pub enum VerifyError {
     NotFound { err: Box<dyn Error> },
     /// Some component needed for verification could not be parsed
     Malformed { err: Box<dyn Error> },
+}
+
+pub fn f(_: &Permission, _: &Permission, _: &Executable) -> VerifyResult {
+    Ok(())
 }

@@ -29,7 +29,7 @@ pub const EXECUTABLE_FACTORY: AutoExecutableFactory = executable::factory::from_
 /// Primary GID, and Secondary Groups.
 ///
 /// [p]: permission::Permission
-pub const SOURCE_PERMISSION_FACTORY: AutoPermissionFactory = permission::factory::from_environment;
+pub const CURRENT_PERMISSION_FACTORY: AutoPermissionFactory = permission::factory::from_environment;
 /// The method to use to find the [Permission][p]s to run the executable as
 ///
 /// This is the target [Permission][p]s of the [Executable][eb]. As such, it is
@@ -38,16 +38,20 @@ pub const SOURCE_PERMISSION_FACTORY: AutoPermissionFactory = permission::factory
 ///
 /// [p]: permission::Permission
 /// [eb]: executable::Executable
-pub const TARGET_PERMISSION_FACTORY: AutoPermissionFactory = permission::factory::from_commandline;
+pub const REQUESTED_PERMISSION_FACTORY: AutoPermissionFactory = permission::factory::from_commandline;
 
 /// An array of all the [Verifier]s to invoke
 ///
 /// We might want multiple checks to pass before running [Executable][eb]. This
 /// is a list of all the checks that have to pass.
 ///
+/// Note that *all* the checks have to pass for the [Executable][eb] to be run.
+/// Effectively, these checks are `AND`ed together. As a corollary, if this list
+/// is empty, the [Executable][eb] will be run unconditionally.
+///
 /// [eb]: executable::Executable
-pub const VERIFICATIONS: &[Verifier] = &[
-    permission::verify::succeed,
+pub const VERIFIERS: &[Verifier] = &[
+    permission::verify::f
 ];
 
 /// The method to run the [Executable][eb] created

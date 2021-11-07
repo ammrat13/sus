@@ -24,7 +24,6 @@ pub type Runner = fn(&Permission, &Executable) -> RunResult;
 /// the code. This trait allows for that. Since it's a `dyn` type, we can't
 /// create variables with it. However, it will work for automatically generated
 /// closures.
-#[allow(dead_code)]
 pub type AbstractRunner = dyn FnMut(&Permission, &Executable) -> RunResult;
 
 /// Convinience type for the result of a [Runner]
@@ -45,6 +44,7 @@ pub type RunResult = Result<Infallible, RunError>;
 /// be in an indeterminate state. There is no easy way to roll back a system
 /// call. As such, the appropriate course of action is to terminate the
 /// application as soon as possible.
+#[derive(Debug)]
 pub enum RunError {
     /// An error occurred when setting the UID of the process
     SetUID { errno: Errno },

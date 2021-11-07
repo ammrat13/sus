@@ -8,6 +8,9 @@
 mod config;
 mod executable;
 mod permission;
+mod request;
+
+use request::Request;
 
 /// Main method for the kernel
 ///
@@ -23,4 +26,31 @@ fn main() {
     std::panic::set_hook(Box::new(|_| {
         std::process::exit(1);
     }));
+
+    // Get the executable to run
+    let executable = config::EXECUTABLE_FACTORY().unwrap();
+    // Get the current and requested permissions
+    let current_permissions = config::CURRENT_PERMISSION_FACTORY().unwrap();
+    let requested_permissions = config::REQUESTED_PERMISSION_FACTORY().unwrap();
+    // Put the runner in a box
+    let runner = Box::new(config::RUNNER);
+
+    // Create the verifiers
+    // We need to clone them from the slice reference
+    let verifiers = {
+        // Do the clone
+        let mut vfers = Vec::new();
+        vfers.extend_from_slice(config::VERIFIERS);
+        // Return
+        vfers
+    };
+
+    let req = Request {
+        executable,
+        current_permissions,
+        requested_permissions,
+        verifiers: Vec::from_iter(verifiers.into_iter().map(Box::new)),
+        runner,
+    };
+    req.service().unwrap();
 }
