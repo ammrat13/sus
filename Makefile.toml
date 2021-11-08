@@ -43,6 +43,7 @@ category = "Development"
 dependencies = [
     "verify-project",
     "audit",
+    "check",
     "format",
     "clippy",
     "sus-indirect-build",
