@@ -1,4 +1,4 @@
-//! Module representing [UserSpec] objects
+//! Module representing [Policy] objects
 //!
 //! In order to understand what permission user has, we need to parse /etc/sudoers.
 //! Entries in /etc/sudoers follow the following pattern, 
@@ -13,6 +13,7 @@
 //! our /etc/sudoers. Notice that UserSpec has an attribute called cmd_specs. Command specs are 
 //! described in sudoers file at the last in each entries and are comma separated. 
 //! 
+pub mod factory;
 
 use std::ffi::CString;
 use nix::unistd::{Gid, Uid};
@@ -32,12 +33,10 @@ pub struct CmdSpec {
   pub passwd: bool
 }
 
-// Struct that represents the User Specifications (a.k.a sudoers entry)
-pub struct UserSpec {
+// Policy Struct
+pub struct Policy {
   // uids that applies to this user spec
   pub username_list: Vec<Uid>,
-  // gids that applies to this user spec
-  pub usergroup_list: Vec<Gid>,
   // list of hosts that the user spec is applied. 
   // For now, we only assume ALL for hosts_list
   pub host_list: Vec<String>,

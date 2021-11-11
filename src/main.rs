@@ -8,6 +8,7 @@
 mod config;
 mod executable;
 mod permission;
+mod policy;
 mod request;
 
 use permission::verify::AbstractVerifier;
@@ -33,6 +34,8 @@ fn main() {
     // Get the current and requested permissions
     let current_permissions = config::CURRENT_PERMISSION_FACTORY().unwrap();
     let requested_permissions = config::REQUESTED_PERMISSION_FACTORY().unwrap();
+    // Get polices from config
+    let policies = config::POLICY_FACTORY().unwrap();
     // Put the runner in a box
     let runner = Box::new(config::RUNNER);
 
