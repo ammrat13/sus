@@ -1,6 +1,6 @@
 # Ignore compiled binaries
 /target
 
-# Ignore configuration modules
-# Use the one in `config/`
-config.rs
+# Ignore all configuration modules
+# Use the ones in `config/`
+src/bin/**/config.rs
