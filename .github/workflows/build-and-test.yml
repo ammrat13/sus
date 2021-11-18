@@ -38,9 +38,15 @@ jobs:
       - name: Do the (release) build and test
         run: cargo make sus-release-build
 
-      - name: Capture artifacts
+      - name: Capture binaries
         uses: actions/upload-artifact@v2
         with:
           name: Binaries
           path: |
-            target/release/sus
+            target/release/sus-kernel
+      - name: Capture docs
+        uses: actions/upload-artifact@v2
+        with:
+          name: Docs
+          path: |
+            target/doc/

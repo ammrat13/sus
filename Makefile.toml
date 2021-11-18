@@ -42,8 +42,9 @@ dependencies = [
 ]
 
 # Task to build the application in release mode
-# It runs formatting and linting, but in check mode only
-# This task is for release builds, so the code should be good to go
+# It runs formatting and linting, but in check mode only. This task is for
+#  release builds, so the code should be good to go
+# It also generates documentation
 [tasks.sus-release-build]
 description = "Workflow to build and test SUS in release mode"
 category = "CI"
@@ -55,6 +56,7 @@ dependencies = [
     "clippy",
     "test",
     "build-release",
+    "docs",
 ]
 
 
