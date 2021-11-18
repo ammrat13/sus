@@ -71,12 +71,13 @@ env_files = [
     { path = "./config/install.env" }
 ]
 script = '''
+    # Install the kernel itself
     install \
         --owner=0 --group=0 \
         --mode=4755 \
         --strip \
         --target-directory="${SUS_INSTALL_PREFIX}/${SUS_INSTALL_DIRECTORY}" \
-        "${CARGO_MAKE_CRATE_TARGET_DIRECTORY}/release/sus"
+        "${CARGO_MAKE_CRATE_TARGET_DIRECTORY}/release/sus-kernel"
 '''
 
 

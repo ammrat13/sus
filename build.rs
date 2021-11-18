@@ -1,22 +1,31 @@
 //! Build script for SUS
 //!
-//! We need to copy over the configuration module. We put it with all the other
-//! configuration files for ease of use. However, we need it to be in `src/` to
-//! actually use it in our code.
+//! We need to copy over the configuration files. We put them with all the other
+//! configuration files for ease of use. However, we need them to be in `src/`
+//! to actually use it in our code.
 
-/// The original configuration file's path
-const ORG: &str = "config/build.rs";
-/// The path the configuration file should be copied to
-const NEW: &str = "src/config.rs";
+/// A structure describing set of files to copy
+struct CopySet {
+    old: &'static str,
+    new: &'static str,
+}
+
+/// The list of copies to perform
+const COPIES: &[CopySet] = &[CopySet {
+    old: "config/sus-kernel.rs",
+    new: "src/bin/sus-kernel/config.rs",
+}];
 
 fn main() -> Result<(), std::io::Error> {
-    // Only need to do this if the configuration has changed
-    // Overwrite any changes to the copy in `src/` as well
-    println!("cargo:rerun-if-changed={}", ORG);
-    println!("cargo:rerun-if-changed={}", NEW);
+    // Do every copy
+    for copy in COPIES {
+        // Only rerun if the configurations have changed
+        println!("cargo:rerun-if-changed={}", copy.old);
+        println!("cargo:rerun-if-changed={}", copy.new);
+        // Do the copy
+        std::fs::copy(copy.old, copy.new)?;
+    }
 
-    // Copy it over
-    std::fs::copy(ORG, NEW)?;
-    // Done
+    // Done successfully
     Ok(())
 }
