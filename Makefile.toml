@@ -8,61 +8,60 @@
 
 
 [env]
-
-# Don't compile with `--all-features` or `--verbose`
-CARGO_MAKE_CARGO_BUILD_TEST_FLAGS = { unset = true }
-CARGO_MAKE_CARGO_VERBOSE_FLAGS = { unset = true }
-
 # Fail on any lint errors
 CARGO_MAKE_CLIPPY_ARGS = "-- -D warnings"
 
 
-# Modify the task for auditing
-# Run it unconditionally
+# Run audit unconditionally
 [tasks.audit]
 condition = {}
 
 
-# Task to build
-# Builds in debug or release mode depending on an environment variable
-[tasks.sus-indirect-build]
-description = "Indirection for building SUS, controlling mode with a variable"
+# Task to format the configuration files
+# The check will happen on the copy, but it won't update the original
+# Use a script for globbing
+[tasks.sus-format-config]
+description = "Run rustfmt on the configuration files"
 category = "Development"
-run_task = [
-    { name = "build",         condition = { env_false = ["SUS_BUILD_RELEASE"] } },
-    { name = "build-release", condition = { env_true  = ["SUS_BUILD_RELEASE"] } },
-]
+dependencies = [ "install-rustfmt" ]
+script = "rustfmt config/*.rs"
 
 
-# Task to build the application
-# The mode of the application is determined by the `SUS_BUILD_RELEASE` variable
-# Will also test the application, as well as run formatting and linting
-[tasks.sus-build]
+# Task to build the application in debug mode
+# It also runs formatting and linting
+[tasks.sus-debug-build]
 description = "Workflow to build and test SUS in debug mode"
 category = "Development"
+dependencies = [
+    "check",
+    "format",
+    "sus-format-config",
+    "clippy",
+    "test",
+    "build",
+]
+
+# Task to build the application in release mode
+# It runs formatting and linting, but in check mode only. This task is for
+#  release builds, so the code should be good to go
+# It also generates documentation
+[tasks.sus-release-build]
+description = "Workflow to build and test SUS in release mode"
+category = "CI"
 dependencies = [
     "verify-project",
     "audit",
     "check",
-    "format",
+    "check-format",
     "clippy",
-    "sus-indirect-build",
     "test",
+    "build-release",
+    "docs",
 ]
-
-# Task to build the application in debug mode
-[tasks.sus-debug-build]
-env = { "SUS_BUILD_RELEASE" = false }
-run_task = "sus-build"
-
-# Task to build the application in release mode
-[tasks.sus-release-build]
-env = { "SUS_BUILD_RELEASE" = true }
-run_task = "sus-build"
 
 
 # Task to install
-# We have to install as setuid root
+# We have to install the kernel as setuid root
 [tasks.install]
 description = "Install the application"
 category = "Install"
@@ -70,13 +69,17 @@ dependencies = [ "sus-release-build" ]
 env_files = [
     { path = "./config/install.env" }
 ]
+
 script = '''
+
+    # Install the kernel itself
     install \
         --owner=0 --group=0 \
         --mode=4755 \
         --strip \
         --target-directory="${SUS_INSTALL_PREFIX}/${SUS_INSTALL_DIRECTORY}" \
-        "${CARGO_MAKE_CRATE_TARGET_DIRECTORY}/release/sus"
+        "${CARGO_MAKE_CRATE_TARGET_DIRECTORY}/release/sus-kernel"
+
 '''
 
 

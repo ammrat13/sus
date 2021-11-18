@@ -10,9 +10,9 @@
 #![allow(dead_code)]
 
 use crate::executable;
-use crate::permission;
 use crate::executable::factory::AutoExecutableFactory;
 use crate::executable::run::Runner;
+use crate::permission;
 use crate::permission::factory::AutoPermissionFactory;
 use crate::permission::verify::Verifier;
 
@@ -38,7 +38,8 @@ pub const CURRENT_PERMISSION_FACTORY: AutoPermissionFactory = permission::factor
 ///
 /// [p]: permission::Permission
 /// [eb]: executable::Executable
-pub const REQUESTED_PERMISSION_FACTORY: AutoPermissionFactory = permission::factory::from_commandline;
+pub const REQUESTED_PERMISSION_FACTORY: AutoPermissionFactory =
+    permission::factory::from_commandline;
 
 /// An array of all the [Verifier]s to invoke
 ///
