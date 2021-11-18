@@ -17,6 +17,16 @@ CARGO_MAKE_CLIPPY_ARGS = "-- -D warnings"
 condition = {}
 
 
+# Task to format the configuration files
+# The check will happen on the copy, but it won't update the original
+# Use a script for globbing
+[tasks.sus-format-config]
+description = "Run rustfmt on the configuration files"
+category = "Development"
+dependencies = [ "install-rustfmt" ]
+script = "rustfmt config/*.rs"
+
+
 # Task to build the application in debug mode
 # It also runs formatting and linting
 [tasks.sus-debug-build]
@@ -25,6 +35,7 @@ category = "Development"
 dependencies = [
     "check",
     "format",
+    "sus-format-config",
     "clippy",
     "test",
     "build",
