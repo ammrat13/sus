@@ -41,7 +41,8 @@ fn main() {
     let verifiers = {
         // Do the clone
         let mut vfers = Vec::new();
-        vfers.extend_from_slice(config::VERIFIERS);
+        vfers.extend_from_slice(config::VERIFIERS); // Need to replace config::VERIFIERS with rules in sudoers on runtime
+        
         // Create and return
         // Box everything up as well
         // See: https://newbedev.com/how-to-create-a-vector-of-boxed-closures-in-rust
