@@ -7,6 +7,7 @@
 
 mod config;
 mod executable;
+mod log;
 mod permission;
 mod request;
 
