@@ -3,8 +3,13 @@ name = "sus"
 version = "0.0.0"
 edition = "2021"
 
+[features]
+default = [ "logging" ]
+logging = [ "simplelog" ]
+
 [[bin]]
 name = "sus-kernel"
 
 [dependencies]
 nix = "0.23.0"
+simplelog = { version = "0.11.0", optional = true }
