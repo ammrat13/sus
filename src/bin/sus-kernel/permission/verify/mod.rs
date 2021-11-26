@@ -5,8 +5,11 @@
 //! that might need to be performed. This module holds the methods for doing
 //! that. It also defines common types for verification.
 
+pub mod sudoers;
+pub mod sudoers_type;
 use super::Permission;
 use crate::executable::Executable;
+pub use sudoers::from_sudoers;
 
 use std::error::Error;
 
