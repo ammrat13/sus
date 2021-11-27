@@ -74,6 +74,7 @@ where
 
     // Parse the list of secondary GIDs
     // Split on commas, and parse everything else as integers
+    // If the string happens to be empty, take that as no additional groups
     let secondary_gids: HashSet<Gid> = match args.get(gid2_idx) {
         None => Err(PermissionFactoryError::SecondaryGIDNotFound),
         Some(s) => {
@@ -81,7 +82,12 @@ where
             let s_ref = s.as_ref();
 
             // Split the string and collect it into a vector
-            let s_spl: Vec<_> = s_ref.split(',').collect();
+            // Handle the edge case of empty string
+            let s_spl: Vec<_> = if s_ref.is_empty() {
+                Vec::new()
+            } else {
+                s_ref.split(',').collect()
+            };
 
             // Try to convert each of them to a gid_t
             let gs_r: Vec<_> = s_spl.iter().map(|c| str::parse(c)).collect();
