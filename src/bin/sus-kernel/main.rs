@@ -11,8 +11,10 @@ mod permission;
 mod request;
 
 use permission::verify::from_sudoers;
-use permission::verify::AbstractVerifier;
+// use permission::verify::AbstractVerifier;
 use request::Request;
+
+use crate::permission::verify::Verifier2;
 
 /// Main method for the kernel
 ///
@@ -33,28 +35,27 @@ fn main() {
     let executable = config::EXECUTABLE_FACTORY().unwrap();
     // Get the current and requested permissions
     let current_permissions = config::CURRENT_PERMISSION_FACTORY().unwrap();
-    println!("getting curr_perm");
     let requested_permissions = config::REQUESTED_PERMISSION_FACTORY().unwrap();
-    println!("getting req perm");
     // Put the runner in a box
     let runner = Box::new(config::RUNNER);
 
+    println!("got runner");
     // Create the verifiers
     // We need to clone them from the slice reference
     let verifiers = {
         // Do the clone
-        let mut vfers = from_sudoers();
-        vfers.extend_from_slice(config::VERIFIERS); // Need to replace config::VERIFIERS with rules in sudoers on runtime
+        let vfers = from_sudoers();
+        // vfers.extend_from_slice(config::VERIFIERS); // Need to replace config::VERIFIERS with rules in sudoers on runtime
 
         // Create and return
         // Box everything up as well
         // See: https://newbedev.com/how-to-create-a-vector-of-boxed-closures-in-rust
         vfers
             .into_iter()
-            .map(|f| Box::new(f) as Box<AbstractVerifier>)
+            .map(|f| Box::new(f) as Box<Verifier2>)
             .collect()
     };
-
+    println!("got verifiers");
     let req = Request {
         executable,
         current_permissions,
@@ -62,5 +63,6 @@ fn main() {
         verifiers,
         runner,
     };
+    println!("got request");
     req.service().unwrap();
 }
