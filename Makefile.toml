@@ -43,7 +43,8 @@ dependencies = [
 
 # Task to build the application in release mode
 # It runs formatting and linting, but in check mode only. This task is for
-#  release builds, so the code should be good to go
+#  release builds, so the code should be good to go. Also, we don't need to
+#  explicitly do the configuration files. They will be copied over then checked.
 # It also generates documentation
 [tasks.sus-release-build]
 description = "Workflow to build and test SUS in release mode"
