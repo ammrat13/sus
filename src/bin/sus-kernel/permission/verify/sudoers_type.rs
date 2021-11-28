@@ -1,3 +1,4 @@
+use super::parsed_sudoers_type::{ParsedSudoers, Rule};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::ffi::CString;
@@ -16,7 +17,7 @@ pub enum Host {
     #[serde(rename = "hostname")]
     Hostname(String),
 }
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub enum Option {
     #[serde(rename = "setenv")]
     Setenv(bool),
@@ -26,7 +27,7 @@ pub enum Option {
 #[derive(Deserialize, Serialize, Debug)]
 pub enum Command {
     #[serde(rename = "command")]
-    Command(CString),
+    CmdPath(CString),
 }
 #[derive(Deserialize, Serialize, Debug)]
 pub struct CmdSpec {
@@ -56,4 +57,18 @@ pub struct Sudoers {
     pub user_aliases: HashMap<String, Vec<User>>,
     #[serde(rename = "User_Specs")]
     pub user_specs: Vec<UserSpec>,
+}
+
+impl Sudoers {
+    pub fn retrieve_ids(self) -> ParsedSudoers {
+        let mut ps = ParsedSudoers {
+            rules: Vec::new(),
+            user_aliases: HashMap::new(),
+        };
+        for user_spec in self.user_specs {
+            let rule = Rule::from_userspec(&user_spec, &self.user_aliases);
+            ps.rules.push(rule);
+        }
+        ps
+    }
 }

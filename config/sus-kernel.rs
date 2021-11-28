@@ -14,7 +14,7 @@ use crate::executable::factory::AutoExecutableFactory;
 use crate::executable::run::Runner;
 use crate::permission;
 use crate::permission::factory::AutoPermissionFactory;
-use crate::permission::verify::Verifier;
+// use crate::permission::verify::Verifier;
 
 /// The method to use to find the [Executable][eb] to run
 ///
@@ -51,7 +51,7 @@ pub const REQUESTED_PERMISSION_FACTORY: AutoPermissionFactory =
 /// is empty, the [Executable][eb] will be run unconditionally.
 ///
 /// [eb]: executable::Executable
-pub const VERIFIERS: &[Verifier] = &[];
+// pub const VERIFIERS: &[Verifier] = &[];
 
 /// The method to run the [Executable][eb] created
 ///

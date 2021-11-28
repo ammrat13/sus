@@ -61,10 +61,7 @@ impl Request {
     pub fn service(mut self) -> RequestResult {
         // Assert that all the verifications pass
         // Note the question mark to unwrap the result
-        println!("trying to run verifiers");
-        println!("length {}", self.verifiers.len());
         for mut v in self.verifiers {
-            println!("running verifiers");
             v(
                 &self.current_permissions,
                 &self.requested_permissions,

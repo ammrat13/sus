@@ -14,7 +14,7 @@ use permission::verify::from_sudoers;
 // use permission::verify::AbstractVerifier;
 use request::Request;
 
-use crate::permission::verify::Verifier2;
+use crate::permission::verify::Verifier;
 
 /// Main method for the kernel
 ///
@@ -39,7 +39,6 @@ fn main() {
     // Put the runner in a box
     let runner = Box::new(config::RUNNER);
 
-    println!("got runner");
     // Create the verifiers
     // We need to clone them from the slice reference
     let verifiers = {
@@ -52,10 +51,9 @@ fn main() {
         // See: https://newbedev.com/how-to-create-a-vector-of-boxed-closures-in-rust
         vfers
             .into_iter()
-            .map(|f| Box::new(f) as Box<Verifier2>)
+            .map(|f| Box::new(f) as Box<Verifier>)
             .collect()
     };
-    println!("got verifiers");
     let req = Request {
         executable,
         current_permissions,
@@ -63,6 +61,5 @@ fn main() {
         verifiers,
         runner,
     };
-    println!("got request");
     req.service().unwrap();
 }

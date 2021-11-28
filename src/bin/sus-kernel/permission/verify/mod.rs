@@ -5,6 +5,7 @@
 //! that might need to be performed. This module holds the methods for doing
 //! that. It also defines common types for verification.
 
+pub mod parsed_sudoers_type;
 pub mod sudoers;
 pub mod sudoers_type;
 use super::Permission;
@@ -19,25 +20,9 @@ use std::error::Error;
 /// the [Permission] they request and the [Executable] the user wishes to run.
 /// They should then return a [VerifyResult] signalling whether the user is
 /// allowed to run it.
-pub type Verifier = fn(&Permission, &Permission, &Executable) -> VerifyResult;
-pub type Verifier2 = dyn FnMut(&Permission, &Permission, &Executable) -> VerifyResult;
-// struct Verifier3 {
-//     verify: Box<dyn FnMut(&Permission, &Permission, &Executable) -> VerifyResult>,
-//     result: Option<VerifyResult>,
-//     curr_perm: Permission,
-//     req_perm: Permission,
-//     executable: Executable,
-// }
+// pub type Verifier = fn(&Permission, &Permission, &Executable) -> VerifyResult;
+pub type Verifier = dyn FnMut(&Permission, &Permission, &Executable) -> VerifyResult;
 
-// impl std::fmt::Display for Verifier3 {
-//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-//         // Write strictly the first element into the supplied output
-//         // stream: `f`. Returns `fmt::Result` which indicates whether the
-//         // operation succeeded or failed. Note that `write!` uses syntax which
-//         // is very similar to `println!`.
-//         write!(f, "curr_perm: {:?} req_perm:{:?}", self.curr_perm, )
-//     }
-// }
 /// Abstract supertype of [Verifier]
 ///
 /// For testing purposes, we might want to have [Verifier]s signal other parts
@@ -51,6 +36,9 @@ pub type AbstractVerifier = dyn FnMut(&Permission, &Permission, &Executable) -> 
 /// Verification may succeed or fail, so the return value of a [Verifier] is a
 /// [Result]. For convinience, this type aliases to the expected return type.
 pub type VerifyResult = Result<(), VerifyError>;
+
+/// String to match on ALL keyword in sudoers
+pub const ALL: &str = "ALL";
 
 /// Error for [Verifier]s
 ///

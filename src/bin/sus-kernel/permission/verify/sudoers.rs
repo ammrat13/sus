@@ -1,68 +1,56 @@
-use crate::executable::Executable;
+use super::sudoers_type::Sudoers;
+use super::{Verifier, VerifyError};
 use crate::permission::verify::VerifyResult;
-use crate::permission::Permission;
-
-use super::sudoers_type::{Sudoers, User};
-use super::Verifier2;
 use nix::unistd::{Gid, Uid};
 use std::ffi::CString;
 use std::fs::File;
 use std::io::BufReader;
-use users::{get_group_by_name, get_user_by_name};
 
 #[allow(dead_code)]
+#[derive(Debug)]
+struct Command {
+    run_as_users: Vec<Uid>,
+    run_as_groups: Vec<Gid>,
+    commands: Vec<CString>,
+}
+
 #[derive(Debug)]
 struct Policy {
     users: Vec<Uid>,
     groups: Vec<Gid>,
-    commands: Vec<CString>,
+    cmd_specs: Vec<Command>,
 }
 
 #[allow(dead_code)]
-pub fn from_sudoers() -> Vec<Box<Verifier2>> {
+pub fn from_sudoers() -> Vec<Box<Verifier>> {
+    // Declare vector of verifiers to return
+    let mut verifiers = Vec::new();
+    // Parse sudoers.json using serde_json
     let file = File::open("sudoers.json").unwrap();
     let reader = BufReader::new(file);
-    let u: Sudoers = serde_json::from_reader(reader).unwrap();
-    let mut verifiers = Vec::new();
-    for user_spec in u.user_specs {
-        let mut policy = Policy {
-            users: Vec::new(),
-            groups: Vec::new(),
-            commands: Vec::new(),
-        };
-
-        let list = user_spec.user_list;
-        for user in list {
-            match user {
-                User::Username(x) => {
-                    if let Some(user) = get_user_by_name(&x) {
-                        policy.users.push(Uid::from_raw(user.uid()))
-                    }
-                }
-                User::Usergroup(x) => {
-                    if let Some(group) = get_group_by_name(&x) {
-                        policy.groups.push(Gid::from_raw(group.gid()))
-                    }
-                }
-                User::Useralias(x) => {
-                    for alias in &u.user_aliases[&x] {
-                        if let User::Username(x) = alias {
-                            if let Some(group) = get_group_by_name(&x) {
-                                policy.groups.push(Gid::from_raw(group.gid()))
-                            }
-                        }
+    let sudoer: Sudoers = serde_json::from_reader(reader).unwrap();
+    // Parse sudoer further and retrieve uids and gids
+    let parsed_sudoer = sudoer.retrieve_ids();
+    for rule in parsed_sudoer.rules {
+        let x: Box<Verifier> = Box::new(move |curr_perm, req_perm, exe| -> VerifyResult {
+            println!("curr_perm: {:?}\n", curr_perm);
+            println!("req_perm: {:?}\n", req_perm);
+            println!("exe: {:?}\n", exe);
+            println!("rule: {:?}\n", rule);
+            if rule.is_relevant(curr_perm) {
+                println!("rule is relevant to curr_perm");
+                for allowed_cmd in &rule.allowed_cmds {
+                    println!("rule is relevant to curr_perm");
+                    if (allowed_cmd.is_relevant(req_perm) && allowed_cmd.paths.contains(&exe.path))
+                        || allowed_cmd.allow_all_cmds
+                    {
+                        return Ok(());
                     }
                 }
             }
-        }
-        let x = Box::new( |curr_perm, req_perm, exe| -> VerifyResult { Ok(()) });
+            Err(VerifyError::NotAllowed)
+        });
         verifiers.push(x);
-
     }
-    return verifiers;
-}
-
-fn returns_closure() -> Box<dyn FnMut(i32) -> i32> {
-    let x = Box::new(|x| x + 1);
-    return x;
+    verifiers
 }
