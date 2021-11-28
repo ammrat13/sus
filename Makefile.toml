@@ -60,6 +60,13 @@ dependencies = [
     "docs",
 ]
 
+# Task to build the application for end users
+# It calls into `sus-release-build`, except it doesn't have `--all-features`
+#  enabled. Only the default features are compiled.
+[tasks.sus-dist-build]
+env = { "CARGO_MAKE_CARGO_BUILD_TEST_FLAGS" = "" }
+run_task = "sus-release-build"
+
 
 # Task to install
 # We have to install the kernel as setuid root
