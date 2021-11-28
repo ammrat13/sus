@@ -78,6 +78,37 @@ pub const LOGGER: Logger = log::to_file;
 /// [rq]: crate::request::Request
 pub const LOG_FILE_PATH: &str = "/dev/stdout";
 
+/// The format of the log message on success
+///
+/// The logging functionality of this crate allows us to configure the messages
+/// that are written on success and failure. This configuration parameter
+/// configures the success message.
+///
+/// Note that this is a macro instead of a hard string literal. This is so that
+/// formatting string still works. The format string literal has to be in the
+/// code literally or as a macro. Thus, this solution.
+#[macro_export]
+macro_rules! CONFIG_LOG_SUCCESS_MSG {
+    () => {
+        "{tstamp_sign}{tstamp_secs}.{tstamp_nanos}\n"
+    };
+}
+/// The format of the log message on failure
+///
+/// The logging functionality of this crate allows us to configure the messages
+/// that are written on success and failure. This configuration parameter
+/// configures the failure message.
+///
+/// Note that this is a macro instead of a hard string literal. This is so that
+/// formatting string still works. The format string literal has to be in the
+/// code literally or as a macro. Thus, this solution.
+#[macro_export]
+macro_rules! CONFIG_LOG_FAILURE_MSG {
+    () => {
+        "{tstamp_sign}{tstamp_secs}.{tstamp_nanos}\n"
+    };
+}
+
 /// What command line argument number to look for for the path of the binary to
 /// execute
 ///

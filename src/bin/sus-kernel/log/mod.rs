@@ -31,7 +31,7 @@ use std::error::Error;
 /// we actually need.
 ///
 /// [rq]: crate::request::Request
-pub type Logger = fn(&Executable, &Permission, &Permission, &VerifyResult) -> LoggerResult;
+pub type Logger = fn(&Executable, &Permission, &Permission, &VerifyResult) -> LogResult;
 /// Abstract supetype of [Logger]
 ///
 /// Keeping with how this crate handles verification and execution, this
@@ -39,12 +39,16 @@ pub type Logger = fn(&Executable, &Permission, &Permission, &VerifyResult) -> Lo
 /// restricted to the [Sized] function pointer type. This might be useful when
 /// constructing tests.
 pub type AbstractLogger =
-    dyn FnMut(&Executable, &Permission, &Permission, &VerifyResult) -> LoggerResult;
+    dyn FnMut(&Executable, &Permission, &Permission, &VerifyResult) -> LogResult;
 
 /// Result type for [Logger]s
 ///
-/// Loggers may return arbitrary errors in the process of writing the data out.
-/// As such, it will either succeed with no message, or return a [Box]
-/// containing an [Error]. It makes little sense to have a `LoggerError` type
-/// since it would provide no other information above the [Error].
-pub type LoggerResult = Result<(), Box<dyn Error>>;
+/// [Logger]s may return arbitrary errors in the process of writing the data
+/// out. On success, they don't return anything. This type captures that.
+pub type LogResult = Result<(), LogError>;
+/// Error type for [Logger]s
+///
+/// [Logger]s may return arbitrary errors in the process of writing the data
+/// out. As such, this type is really only provided for convenience. It's an
+/// alias to a general error [Box].
+pub type LogError = Box<dyn Error>;

@@ -6,7 +6,7 @@
 //! [rq]: crate::request::Request
 
 use super::to_write;
-use super::LoggerResult;
+use super::LogResult;
 
 use crate::config;
 use crate::executable::Executable;
@@ -41,7 +41,7 @@ pub fn to_file(
     cur_p: &Permission,
     req_p: &Permission,
     res: &VerifyResult,
-) -> LoggerResult {
+) -> LogResult {
     // Open the file in append mode
     let mut f = OpenOptions::new()
         .create(true)

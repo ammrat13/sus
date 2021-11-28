@@ -10,6 +10,7 @@ use crate::executable::run::AbstractRunner;
 use crate::executable::run::RunError;
 use crate::executable::Executable;
 use crate::log::AbstractLogger;
+use crate::log::LogError;
 use crate::permission::verify::AbstractVerifier;
 use crate::permission::verify::VerifyError;
 use crate::permission::verify::VerifyResult;
@@ -73,7 +74,6 @@ impl Request {
         // Assert that all the verifications pass
         // Make sure to execute all the verifiers, regardless of if they fail.
         //  This helps us mitigate timing attacks.
-        // Note the question mark to unwrap the result
         let verify_res = {
             let mut res: VerifyResult = Ok(());
             for v in &mut self.verifiers {
@@ -86,7 +86,16 @@ impl Request {
             // Return
             res
         };
+        // Log the attempt result
+        let log_res = (self.logger)(
+            &self.executable,
+            &self.current_permissions,
+            &self.requested_permissions,
+            &verify_res,
+        );
+        // Fail out if we didn't verify or log, in that order
         verify_res.map_err(|e| RequestError::Verify { cause: e })?;
+        log_res.map_err(|e| RequestError::Log { cause: e })?;
         // Execute and unwrap
         (self.runner)(&self.requested_permissions, &self.executable)
             .map_err(|e| RequestError::Run { cause: e })
@@ -114,6 +123,8 @@ pub type RequestResult = Result<Infallible, RequestError>;
 pub enum RequestError {
     /// An error occured during verification
     Verify { cause: VerifyError },
+    /// An error occured when trying to log
+    Log { cause: LogError },
     /// An error occurred when trying to run the [Executable]
     Run { cause: RunError },
 }

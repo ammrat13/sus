@@ -15,11 +15,12 @@
 //! [inst]: std::time::Instant
 //! [rq]: crate::request::Request
 
-use super::LoggerResult;
+use super::LogResult;
 
 use crate::executable::Executable;
 use crate::permission::verify::VerifyResult;
 use crate::permission::Permission;
+use crate::{CONFIG_LOG_FAILURE_MSG, CONFIG_LOG_SUCCESS_MSG};
 
 use std::io::Write;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -29,8 +30,8 @@ pub fn to_write<W>(
     _: &Executable,
     _: &Permission,
     _: &Permission,
-    _: &VerifyResult,
-) -> LoggerResult
+    res: &VerifyResult,
+) -> LogResult
 where
     W: Write,
 {
@@ -43,13 +44,26 @@ where
     };
 
     // Write out
-    write!(
-        w,
-        "{tstamp_sign}{tstamp_secs}.{tstamp_nanos:0<9}",
-        tstamp_sign = if tstamp_is_neg { "-" } else { " " },
-        tstamp_secs = tstamp.as_secs(),
-        tstamp_nanos = tstamp.subsec_nanos(),
-    )?;
+    // Use different format strings for success and failure. This causes code
+    //  duplication, but it doesn't seem to be avoidable. The two branches of
+    //  this `match` are effectively identical.
+    // Note the questionmark at the end to unwrap.
+    match res {
+        Ok(_) => write!(
+            w,
+            CONFIG_LOG_SUCCESS_MSG!(),
+            tstamp_sign = if tstamp_is_neg { "-" } else { " " },
+            tstamp_secs = tstamp.as_secs(),
+            tstamp_nanos = tstamp.subsec_nanos(),
+        ),
+        Err(_) => write!(
+            w,
+            CONFIG_LOG_FAILURE_MSG!(),
+            tstamp_sign = if tstamp_is_neg { "-" } else { " " },
+            tstamp_secs = tstamp.as_secs(),
+            tstamp_nanos = tstamp.subsec_nanos(),
+        ),
+    }?;
 
     Ok(())
 }
