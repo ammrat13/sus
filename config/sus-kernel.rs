@@ -100,7 +100,7 @@ pub const LOG_FILE_PATH: &str = "/dev/stdout";
 /// [pm]: permission::Permission
 macro_rules! LOG_WRITE_SUCCESS_MSG {
     () => {
-        "{tstamp_secs}.{tstamp_nanos:0>9} SUCCESS Executing {execable}; From {cur_perm}; To {req_perm};\n"
+        "{tstamp_secs}.{tstamp_nanos:0>9} SUCCESS Executing {execable}; From {cur_perm}; To {req_perm}\n"
     };
 }
 pub(crate) use LOG_WRITE_SUCCESS_MSG;
