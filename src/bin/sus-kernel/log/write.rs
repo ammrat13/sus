@@ -1,4 +1,4 @@
-//! Log [Request]s to an existing [Write] object
+//! Log [Request][rq]s to an existing [Write] object
 //!
 //! Even though we will likely be logging to [File][f]s most of the time, it
 //! would be nice to be able to log to a generic object implementing [Write].
@@ -13,16 +13,24 @@
 //!
 //! [f]: std::fs::File
 //! [inst]: std::time::Instant
+//! [rq]: crate::request::Request
 
 use super::LoggerResult;
 
+use crate::executable::Executable;
 use crate::permission::verify::VerifyResult;
-use crate::request::Request;
+use crate::permission::Permission;
 
 use std::io::Write;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-pub fn to_write<W>(w: &mut W, _: &Request, _: &VerifyResult) -> LoggerResult
+pub fn to_write<W>(
+    w: &mut W,
+    _: &Executable,
+    _: &Permission,
+    _: &Permission,
+    _: &VerifyResult,
+) -> LoggerResult
 where
     W: Write,
 {
