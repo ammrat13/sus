@@ -27,7 +27,7 @@ use std::fs::OpenOptions;
 ///
 /// [f]: std::fs::File
 /// [w]: std::io::Write
-pub fn to_file(rq: &Request, res: &VerifyResult) -> LoggerResult {
+pub fn to_file(req: &Request, res: &VerifyResult) -> LoggerResult {
     // Open the file in append mode
     let f = OpenOptions::new()
         .append(true)
@@ -36,5 +36,5 @@ pub fn to_file(rq: &Request, res: &VerifyResult) -> LoggerResult {
     // Pass it to the logger and return
     // Don't need to close the file. It will automatically be closed when the
     //  scope ends
-    to_write(f, rq, res)
+    to_write(f, req, res)
 }
