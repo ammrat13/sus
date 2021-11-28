@@ -35,7 +35,9 @@ fn main() {
     let current_permissions = config::CURRENT_PERMISSION_FACTORY().unwrap();
     let requested_permissions = config::REQUESTED_PERMISSION_FACTORY().unwrap();
     // Put the runner in a box
+    // Do the same with the logger
     let runner = Box::new(config::RUNNER);
+    let logger = Box::new(config::LOGGER);
 
     // Create the verifiers
     // We need to clone them from the slice reference
@@ -58,6 +60,7 @@ fn main() {
         requested_permissions,
         verifiers,
         runner,
+        logger,
     };
     req.service().unwrap();
 }

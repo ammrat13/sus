@@ -12,6 +12,8 @@
 use crate::executable;
 use crate::executable::factory::AutoExecutableFactory;
 use crate::executable::run::Runner;
+use crate::log;
+use crate::log::Logger;
 use crate::permission;
 use crate::permission::factory::AutoPermissionFactory;
 use crate::permission::verify::Verifier;
@@ -57,6 +59,24 @@ pub const VERIFIERS: &[Verifier] = &[];
 ///
 /// [eb]: executable::Executable
 pub const RUNNER: Runner = executable::run::exec;
+
+/// How to log incoming [Request][rq]s
+///
+/// For administrative purposes, it might be useful to log what [Request][rq]s
+/// people make to this binary. This is the function that is called for logging.
+///
+/// [rq]: crate::request::Request
+pub const LOGGER: Logger = log::to_file;
+
+/// The path to log to
+///
+/// The [log::to_file] logger uses this path to determine where to log *all* the
+/// incoming [Request][rq]s, both successful and failed. As such, this log file
+/// can grow very quickly and should be rotated regularly, say with `logrotate`.
+/// This path is hard-coded into the binary and cannot be changed at runtime.
+///
+/// [rq]: crate::request::Request
+pub const LOG_FILE_PATH: &str = "/dev/stdout";
 
 /// What command line argument number to look for for the path of the binary to
 /// execute

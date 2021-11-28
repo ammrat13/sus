@@ -9,6 +9,7 @@
 use crate::executable::run::AbstractRunner;
 use crate::executable::run::RunError;
 use crate::executable::Executable;
+use crate::log::AbstractLogger;
 use crate::permission::verify::AbstractVerifier;
 use crate::permission::verify::VerifyError;
 use crate::permission::verify::VerifyResult;
@@ -45,6 +46,15 @@ pub struct Request {
     pub verifiers: Vec<Box<AbstractVerifier>>,
     /// How to run the [Executable]
     pub runner: Box<AbstractRunner>,
+
+    /// How to log [Request]s
+    ///
+    /// Regardless of whether it passed all the [Verifiers][vf], this function
+    /// will be called with the status. This function can then log the result
+    /// somewhere for administration purposes.
+    ///
+    /// [vf]: crate::permission::verify::Verifier
+    pub logger: Box<AbstractLogger>,
 }
 
 impl Request {
