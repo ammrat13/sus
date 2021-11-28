@@ -9,6 +9,8 @@ use super::Permission;
 use crate::executable::Executable;
 
 use std::error::Error;
+use std::fmt;
+use std::fmt::{Display, Formatter};
 
 /// Type for verification functions
 ///
@@ -41,9 +43,30 @@ pub type VerifyResult = Result<(), VerifyError>;
 #[derive(Debug)]
 pub enum VerifyError {
     /// The user is not allowed to run the [Executable]
-    NotAllowed,
+    NotAllowed { err: Box<dyn Error> },
     /// Some component needed for verification was not found
     NotFound { err: Box<dyn Error> },
     /// Some component needed for verification could not be parsed
     Malformed { err: Box<dyn Error> },
+}
+
+impl Display for VerifyError {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        // Write different things depending on the type
+        match self {
+            // Special message if not allowed
+            VerifyError::NotAllowed { err } => {
+                write!(f, "Access denied because {}", err)?;
+            }
+            // Internal errors
+            VerifyError::NotFound { err } => {
+                write!(f, "Internal error NotFound - {}", err)?;
+            }
+            VerifyError::Malformed { err } => {
+                write!(f, "Internal error Malformed - {}", err)?;
+            }
+        }
+        // Return
+        Ok(())
+    }
 }

@@ -128,7 +128,7 @@ pub(crate) use LOG_WRITE_SUCCESS_MSG;
 /// [ve]: permission::verify::VerifyError
 macro_rules! LOG_WRITE_FAILURE_MSG {
     () => {
-        "{tstamp_secs}.{tstamp_nanos:0>9} FAILURE Executing {execable}; From {cur_perm}; To {req_perm}; Error {failure:?}\n"
+        "{tstamp_secs}.{tstamp_nanos:0>9} FAILURE Executing {execable}; From {cur_perm}; To {req_perm}; Error {failure}\n"
     };
 }
 pub(crate) use LOG_WRITE_FAILURE_MSG;
