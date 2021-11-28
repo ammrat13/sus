@@ -29,12 +29,13 @@ use std::fs::OpenOptions;
 /// [w]: std::io::Write
 pub fn to_file(req: &Request, res: &VerifyResult) -> LoggerResult {
     // Open the file in append mode
-    let f = OpenOptions::new()
+    let mut f = OpenOptions::new()
+        .create(true)
         .append(true)
         .open(config::LOG_FILE_PATH)?;
 
     // Pass it to the logger and return
     // Don't need to close the file. It will automatically be closed when the
     //  scope ends
-    to_write(f, req, res)
+    to_write(&mut f, req, res)
 }
