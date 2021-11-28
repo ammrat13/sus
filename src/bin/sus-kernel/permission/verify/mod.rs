@@ -56,14 +56,14 @@ impl Display for VerifyError {
         match self {
             // Special message if not allowed
             VerifyError::NotAllowed { err } => {
-                write!(f, "Access denied because {}", err)?;
+                write!(f, "Access Denied - {}", err)?;
             }
             // Internal errors
             VerifyError::NotFound { err } => {
-                write!(f, "Internal error NotFound - {}", err)?;
+                write!(f, "Internal Error NotFound - {}", err)?;
             }
             VerifyError::Malformed { err } => {
-                write!(f, "Internal error Malformed - {}", err)?;
+                write!(f, "Internal Error Malformed - {}", err)?;
             }
         }
         // Return
