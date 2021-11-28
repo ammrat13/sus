@@ -87,12 +87,23 @@ pub const LOG_FILE_PATH: &str = "/dev/stdout";
 /// Note that this is a macro instead of a hard string literal. This is so that
 /// formatting string still works. The format string literal has to be in the
 /// code literally or as a macro. Thus, this solution.
-#[macro_export]
-macro_rules! CONFIG_LOG_SUCCESS_MSG {
+///
+/// The code provides the following variables for use
+///   * `tstamp_secs`: The current unix timestamp's whole number part in seconds
+///   * `tstamp_nanos`: The fractional part of the current unix timestamp in
+///     nanoseconds
+///   * `execable`: The [Executable][eb] to execute
+///   * `cur_perm`: The current [Permissions][pm] of the user
+///   * `req_perm`: The [Permissions][pm] the user requested
+///
+/// [eb]: executable::Executable
+/// [pm]: permission::Permission
+macro_rules! LOG_WRITE_SUCCESS_MSG {
     () => {
-        "{tstamp_sign}{tstamp_secs}.{tstamp_nanos}\n"
+        "{tstamp_secs}.{tstamp_nanos:0>9} SUCCESS Executing {execable}; From {cur_perm}; To {req_perm};\n"
     };
 }
+pub(crate) use LOG_WRITE_SUCCESS_MSG;
 /// The format of the log message on failure
 ///
 /// The logging functionality of this crate allows us to configure the messages
@@ -102,12 +113,25 @@ macro_rules! CONFIG_LOG_SUCCESS_MSG {
 /// Note that this is a macro instead of a hard string literal. This is so that
 /// formatting string still works. The format string literal has to be in the
 /// code literally or as a macro. Thus, this solution.
-#[macro_export]
-macro_rules! CONFIG_LOG_FAILURE_MSG {
+///
+/// The code provides the following variables for use
+///   * `tstamp_secs`: The current unix timestamp's whole number part in seconds
+///   * `tstamp_nanos`: The fractional part of the current unix timestamp in
+///     nanoseconds
+///   * `execable`: The [Executable][eb] to execute
+///   * `cur_perm`: The current [Permissions][pm] of the user
+///   * `req_perm`: The [Permissions][pm] the user requested
+///   * `failure`: The [VerifyError][ve] reported
+///
+/// [eb]: executable::Executable
+/// [pm]: permission::Permission
+/// [ve]: permission::verify::VerifyError
+macro_rules! LOG_WRITE_FAILURE_MSG {
     () => {
-        "{tstamp_sign}{tstamp_secs}.{tstamp_nanos}\n"
+        "{tstamp_secs}.{tstamp_nanos:0>9} FAILURE Executing {execable}; From {cur_perm}; To {req_perm}; Error {failure:?}\n"
     };
 }
+pub(crate) use LOG_WRITE_FAILURE_MSG;
 
 /// What command line argument number to look for for the path of the binary to
 /// execute

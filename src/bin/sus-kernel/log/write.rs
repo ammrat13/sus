@@ -17,19 +17,19 @@
 
 use super::LogResult;
 
+use crate::config;
 use crate::executable::Executable;
 use crate::permission::verify::VerifyResult;
 use crate::permission::Permission;
-use crate::{CONFIG_LOG_FAILURE_MSG, CONFIG_LOG_SUCCESS_MSG};
 
 use std::io::Write;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub fn to_write<W>(
     w: &mut W,
-    _: &Executable,
-    _: &Permission,
-    _: &Permission,
+    ex: &Executable,
+    cur_p: &Permission,
+    req_p: &Permission,
     res: &VerifyResult,
 ) -> LogResult
 where
@@ -38,9 +38,9 @@ where
     // Get the Duration since the epoch
     // Don't fail if we're before the epoch. Instead, just print a negative
     //  number.
-    let (tstamp_is_neg, tstamp) = match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(res) => (false, res),
-        Err(e) => (true, e.duration()),
+    let (tstamp_negation, tstamp) = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(res) => (1, res),
+        Err(e) => (-1, e.duration()),
     };
 
     // Write out
@@ -51,17 +51,22 @@ where
     match res {
         Ok(_) => write!(
             w,
-            CONFIG_LOG_SUCCESS_MSG!(),
-            tstamp_sign = if tstamp_is_neg { "-" } else { " " },
-            tstamp_secs = tstamp.as_secs(),
+            config::LOG_WRITE_SUCCESS_MSG!(),
+            tstamp_secs = tstamp_negation * (tstamp.as_secs() as i128),
             tstamp_nanos = tstamp.subsec_nanos(),
+            execable = ex,
+            cur_perm = cur_p,
+            req_perm = req_p,
         ),
-        Err(_) => write!(
+        Err(e) => write!(
             w,
-            CONFIG_LOG_FAILURE_MSG!(),
-            tstamp_sign = if tstamp_is_neg { "-" } else { " " },
-            tstamp_secs = tstamp.as_secs(),
+            config::LOG_WRITE_FAILURE_MSG!(),
+            tstamp_secs = tstamp_negation * (tstamp.as_secs() as i128),
             tstamp_nanos = tstamp.subsec_nanos(),
+            execable = ex,
+            cur_perm = cur_p,
+            req_perm = req_p,
+            failure = e,
         ),
     }?;
 
