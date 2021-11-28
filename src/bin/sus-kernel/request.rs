@@ -66,7 +66,7 @@ impl Request {
         // Note the question mark to unwrap the result
         let verify_res = {
             let mut res: VerifyResult = Ok(());
-            for mut v in self.verifiers {
+            for v in &mut self.verifiers {
                 res = res.and(v(
                     &self.current_permissions,
                     &self.requested_permissions,
