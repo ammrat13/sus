@@ -14,6 +14,8 @@ use crate::permission::verify::VerifyResult;
 use crate::permission::Permission;
 
 use std::fs::OpenOptions;
+use std::fs::Permissions;
+use std::os::unix::fs::PermissionsExt;
 
 /// Function to log a given [Request][rq] and [VerifyResult] to a file
 ///
@@ -28,7 +30,9 @@ use std::fs::OpenOptions;
 /// the Current [Permission], and the Requested [Permission].
 ///
 /// The path to the file to be used is pre-configured. It is given by
-/// [config::LOG_FILE_PATH].
+/// [config::LOG_FILE_PATH]. The same is true for the permissions of the file.
+/// The file permissions will be changed to [config::LOG_FILE_PERMS]
+/// unconditionally.
 ///
 /// This function can error out on its own if it fails to open the file for
 /// appending
@@ -47,6 +51,9 @@ pub fn to_file(
         .create(true)
         .append(true)
         .open(config::LOG_FILE_PATH)?;
+
+    // Set the file mode
+    f.set_permissions(Permissions::from_mode(config::LOG_FILE_PERMS))?;
 
     // Pass it to the logger and return
     // Don't need to close the file. It will automatically be closed when the

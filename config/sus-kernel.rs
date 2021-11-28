@@ -77,6 +77,11 @@ pub const LOGGER: Logger = log::to_file;
 ///
 /// [rq]: crate::request::Request
 pub const LOG_FILE_PATH: &str = "/var/log/sus.log";
+/// The permissions to log with
+///
+/// This configuration parameter sets the permissions that [log::to_file] will
+/// set the log file. They will be set unconditionally.
+pub const LOG_FILE_PERMS: u32 = 0o400;
 
 /// The format of the log message on success
 ///
