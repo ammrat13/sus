@@ -76,7 +76,7 @@ pub const LOGGER: Logger = log::to_file;
 /// This path is hard-coded into the binary and cannot be changed at runtime.
 ///
 /// [rq]: crate::request::Request
-pub const LOG_FILE_PATH: &str = "/dev/stdout";
+pub const LOG_FILE_PATH: &str = "/var/log/sus.log";
 
 /// The format of the log message on success
 ///
