@@ -9,7 +9,7 @@
 use crate::executable::run::AbstractRunner;
 use crate::executable::run::RunError;
 use crate::executable::Executable;
-use crate::permission::verify::AbstractVerifier;
+use crate::permission::verify::Verifier;
 use crate::permission::verify::VerifyError;
 use crate::permission::Permission;
 
@@ -41,7 +41,7 @@ pub struct Request {
     /// list is empty, the [Executable] will be run unconditionally.
     ///
     /// [vf]: crate::permission::verify::Verifier
-    pub verifiers: Vec<Box<AbstractVerifier>>,
+    pub verifiers: Vec<Box<Verifier>>,
     /// How to run the [Executable]
     pub runner: Box<AbstractRunner>,
 }

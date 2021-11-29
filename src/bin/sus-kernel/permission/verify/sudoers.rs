@@ -33,14 +33,8 @@ pub fn from_sudoers() -> Vec<Box<Verifier>> {
     let parsed_sudoer = sudoer.retrieve_ids();
     for rule in parsed_sudoer.rules {
         let x: Box<Verifier> = Box::new(move |curr_perm, req_perm, exe| -> VerifyResult {
-            println!("curr_perm: {:?}\n", curr_perm);
-            println!("req_perm: {:?}\n", req_perm);
-            println!("exe: {:?}\n", exe);
-            println!("rule: {:?}\n", rule);
             if rule.is_relevant(curr_perm) {
-                println!("rule is relevant to curr_perm");
                 for allowed_cmd in &rule.allowed_cmds {
-                    println!("rule is relevant to curr_perm");
                     if (allowed_cmd.is_relevant(req_perm) && allowed_cmd.paths.contains(&exe.path))
                         || allowed_cmd.allow_all_cmds
                     {
@@ -53,4 +47,8 @@ pub fn from_sudoers() -> Vec<Box<Verifier>> {
         verifiers.push(x);
     }
     verifiers
+    // println!("curr_perm: {:?}\n", curr_perm);
+    //         println!("req_perm: {:?}\n", req_perm);
+    //         println!("exe: {:?}\n", exe);
+    //         println!("rule: {:?}\n", rule);
 }

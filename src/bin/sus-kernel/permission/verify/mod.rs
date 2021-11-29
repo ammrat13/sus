@@ -29,7 +29,7 @@ pub type Verifier = dyn FnMut(&Permission, &Permission, &Executable) -> VerifyRe
 /// of the code. This trait allows for that. Since it's a `dyn` type, we can't
 /// create variables with it. However, it will work for automatically generated
 /// closures.
-pub type AbstractVerifier = dyn FnMut(&Permission, &Permission, &Executable) -> VerifyResult;
+// pub type AbstractVerifier = dyn FnMut(&Permission, &Permission, &Executable) -> VerifyResult;
 
 /// Convinience type for the result of a [Verifier]
 ///
