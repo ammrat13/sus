@@ -4,8 +4,8 @@ version = "0.0.0"
 edition = "2021"
 
 [features]
-default = [ "logging" ]
-logging = []
+default = [ "log" ]
+log = []
 
 [[bin]]
 name = "sus-kernel"

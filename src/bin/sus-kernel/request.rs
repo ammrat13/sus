@@ -14,7 +14,7 @@ use crate::permission::verify::VerifyError;
 use crate::permission::verify::VerifyResult;
 use crate::permission::Permission;
 
-#[cfg(feature = "logging")]
+#[cfg(feature = "log")]
 use crate::log::{AbstractLogger, LogError};
 
 use std::convert::Infallible;
@@ -56,7 +56,7 @@ pub struct Request {
     /// somewhere for administration purposes.
     ///
     /// [vf]: crate::permission::verify::Verifier
-    #[cfg(feature = "logging")]
+    #[cfg(feature = "log")]
     pub logger: Box<AbstractLogger>,
 }
 
@@ -90,7 +90,7 @@ impl Request {
         };
         // Log the attempt result
         // Fail out immediately if we can't
-        #[cfg(feature = "logging")]
+        #[cfg(feature = "log")]
         {
             (self.logger)(
                 &self.executable,
@@ -130,7 +130,7 @@ pub enum RequestError {
     /// An error occured during verification
     Verify { cause: VerifyError },
     /// An error occured when trying to log
-    #[cfg(feature = "logging")]
+    #[cfg(feature = "log")]
     Log { cause: LogError },
     /// An error occurred when trying to run the [Executable]
     Run { cause: RunError },

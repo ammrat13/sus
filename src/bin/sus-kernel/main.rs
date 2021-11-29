@@ -14,7 +14,7 @@ mod request;
 use permission::verify::AbstractVerifier;
 use request::Request;
 
-#[cfg(feature = "logging")]
+#[cfg(feature = "log")]
 use log::AbstractLogger;
 
 /// Method to get the [Logger][lg] to use
@@ -25,7 +25,7 @@ use log::AbstractLogger;
 /// Thus, for optional features we define these separate functions.
 ///
 /// [lg]: log::Logger
-#[cfg(feature = "logging")]
+#[cfg(feature = "log")]
 fn get_logger() -> Box<AbstractLogger> {
     Box::new(config::LOGGER)
 }
@@ -78,7 +78,7 @@ fn main() {
         verifiers,
         runner,
         // Logging functionality
-        #[cfg(feature = "logging")]
+        #[cfg(feature = "log")]
         logger: get_logger(),
     };
     // Service the request

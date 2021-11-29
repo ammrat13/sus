@@ -7,7 +7,7 @@
 //!
 //! [rq]: crate::request::Request
 
-#![cfg(feature = "logging")]
+#![cfg(feature = "log")]
 
 pub mod file;
 pub use file::to_file;
