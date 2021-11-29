@@ -58,6 +58,11 @@ where
             cur_perm = cur_p,
             req_perm = req_p,
         ),
+
+        // Have different handling based on features
+        // If the `log_fail_msg` feature is enabled, we should provide the error
+        //  to the log. Otherwise, we should not.
+        #[cfg(feature = "log_fail_msg")]
         Err(e) => write!(
             w,
             config::LOG_WRITE_FAILURE_MSG!(),
@@ -67,6 +72,16 @@ where
             cur_perm = cur_p,
             req_perm = req_p,
             failure = e,
+        ),
+        #[cfg(not(feature = "log_fail_msg"))]
+        Err(_) => write!(
+            w,
+            config::LOG_WRITE_FAILURE_MSG!(),
+            tstamp_secs = tstamp_negation * (tstamp.as_secs() as i128),
+            tstamp_nanos = tstamp.subsec_nanos(),
+            execable = ex,
+            cur_perm = cur_p,
+            req_perm = req_p,
         ),
     }?;
 

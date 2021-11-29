@@ -81,7 +81,7 @@ pub const LOGGER: Logger = log::to_file;
 ///
 /// [rq]: crate::request::Request
 #[cfg(feature = "log")]
-pub const LOG_FILE_PATH: &str = "/var/log/sus.log";
+pub const LOG_FILE_PATH: &str = "/dev/stdout";
 /// The permissions to log with
 ///
 /// This configuration parameter sets the permissions that [log::to_file] will
@@ -134,12 +134,19 @@ pub(crate) use LOG_WRITE_SUCCESS_MSG;
 ///   * `execable`: The [Executable][eb] to execute
 ///   * `cur_perm`: The current [Permissions][pm] of the user
 ///   * `req_perm`: The [Permissions][pm] the user requested
-///   * `failure`: The [VerifyError][ve] reported
+///   * `failure`: The [VerifyError][ve] reported. Only provided if the
+///     `log_fail_msg` feature is enabled.
 ///
 /// [eb]: executable::Executable
 /// [pm]: permission::Permission
 /// [ve]: permission::verify::VerifyError
-#[cfg(feature = "log")]
+#[cfg(all(feature = "log", not(feature = "log_fail_msg")))]
+macro_rules! LOG_WRITE_FAILURE_MSG {
+    () => {
+        "{tstamp_secs}.{tstamp_nanos:0>9} FAILURE Executing {execable}; From {cur_perm}; To {req_perm}\n"
+    };
+}
+#[cfg(all(feature = "log", feature = "log_fail_msg"))]
 macro_rules! LOG_WRITE_FAILURE_MSG {
     () => {
         "{tstamp_secs}.{tstamp_nanos:0>9} FAILURE Executing {execable}; From {cur_perm}; To {req_perm}; Error {failure}\n"

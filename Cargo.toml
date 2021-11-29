@@ -6,6 +6,7 @@ edition = "2021"
 [features]
 default = [ "log" ]
 log = []
+log_fail_msg = [ "log" ]
 
 [[bin]]
 name = "sus-kernel"
