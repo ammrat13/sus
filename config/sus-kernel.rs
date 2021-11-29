@@ -81,7 +81,7 @@ pub const LOGGER: Logger = log::to_file;
 ///
 /// [rq]: crate::request::Request
 #[cfg(feature = "log")]
-pub const LOG_FILE_PATH: &str = "/dev/stdout";
+pub const LOG_FILE_PATH: &str = "/var/log/sus.log";
 /// The permissions to log with
 ///
 /// This configuration parameter sets the permissions that [log::to_file] will
