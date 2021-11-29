@@ -12,11 +12,14 @@
 use crate::executable;
 use crate::executable::factory::AutoExecutableFactory;
 use crate::executable::run::Runner;
-use crate::log;
-use crate::log::Logger;
 use crate::permission;
 use crate::permission::factory::AutoPermissionFactory;
 use crate::permission::verify::Verifier;
+
+#[cfg(feature = "logging")]
+use crate::log;
+#[cfg(feature = "logging")]
+use crate::log::Logger;
 
 /// The method to use to find the [Executable][eb] to run
 ///
@@ -66,6 +69,7 @@ pub const RUNNER: Runner = executable::run::exec;
 /// people make to this binary. This is the function that is called for logging.
 ///
 /// [rq]: crate::request::Request
+#[cfg(feature = "logging")]
 pub const LOGGER: Logger = log::to_file;
 
 /// The path to log to
@@ -76,11 +80,13 @@ pub const LOGGER: Logger = log::to_file;
 /// This path is hard-coded into the binary and cannot be changed at runtime.
 ///
 /// [rq]: crate::request::Request
+#[cfg(feature = "logging")]
 pub const LOG_FILE_PATH: &str = "/var/log/sus.log";
 /// The permissions to log with
 ///
 /// This configuration parameter sets the permissions that [log::to_file] will
 /// set the log file. They will be set unconditionally.
+#[cfg(feature = "logging")]
 pub const LOG_FILE_PERMS: u32 = 0o400;
 
 /// The format of the log message on success
@@ -103,11 +109,13 @@ pub const LOG_FILE_PERMS: u32 = 0o400;
 ///
 /// [eb]: executable::Executable
 /// [pm]: permission::Permission
+#[cfg(feature = "logging")]
 macro_rules! LOG_WRITE_SUCCESS_MSG {
     () => {
         "{tstamp_secs}.{tstamp_nanos:0>9} SUCCESS Executing {execable}; From {cur_perm}; To {req_perm}\n"
     };
 }
+#[cfg(feature = "logging")]
 pub(crate) use LOG_WRITE_SUCCESS_MSG;
 /// The format of the log message on failure
 ///
@@ -131,11 +139,13 @@ pub(crate) use LOG_WRITE_SUCCESS_MSG;
 /// [eb]: executable::Executable
 /// [pm]: permission::Permission
 /// [ve]: permission::verify::VerifyError
+#[cfg(feature = "logging")]
 macro_rules! LOG_WRITE_FAILURE_MSG {
     () => {
         "{tstamp_secs}.{tstamp_nanos:0>9} FAILURE Executing {execable}; From {cur_perm}; To {req_perm}; Error {failure}\n"
     };
 }
+#[cfg(feature = "logging")]
 pub(crate) use LOG_WRITE_FAILURE_MSG;
 
 /// What command line argument number to look for for the path of the binary to

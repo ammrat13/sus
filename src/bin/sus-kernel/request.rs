@@ -9,12 +9,13 @@
 use crate::executable::run::AbstractRunner;
 use crate::executable::run::RunError;
 use crate::executable::Executable;
-use crate::log::AbstractLogger;
-use crate::log::LogError;
 use crate::permission::verify::AbstractVerifier;
 use crate::permission::verify::VerifyError;
 use crate::permission::verify::VerifyResult;
 use crate::permission::Permission;
+
+#[cfg(feature = "logging")]
+use crate::log::{AbstractLogger, LogError};
 
 use std::convert::Infallible;
 
@@ -55,6 +56,7 @@ pub struct Request {
     /// somewhere for administration purposes.
     ///
     /// [vf]: crate::permission::verify::Verifier
+    #[cfg(feature = "logging")]
     pub logger: Box<AbstractLogger>,
 }
 
@@ -87,15 +89,19 @@ impl Request {
             res
         };
         // Log the attempt result
-        let log_res = (self.logger)(
-            &self.executable,
-            &self.current_permissions,
-            &self.requested_permissions,
-            &verify_res,
-        );
-        // Fail out if we didn't verify or log, in that order
+        // Fail out immediately if we can't
+        #[cfg(feature = "logging")]
+        {
+            (self.logger)(
+                &self.executable,
+                &self.current_permissions,
+                &self.requested_permissions,
+                &verify_res,
+            )
+            .map_err(|e| RequestError::Log { cause: e })?;
+        }
+        // Fail out if we didn't verify
         verify_res.map_err(|e| RequestError::Verify { cause: e })?;
-        log_res.map_err(|e| RequestError::Log { cause: e })?;
         // Execute and unwrap
         (self.runner)(&self.requested_permissions, &self.executable)
             .map_err(|e| RequestError::Run { cause: e })
@@ -124,6 +130,7 @@ pub enum RequestError {
     /// An error occured during verification
     Verify { cause: VerifyError },
     /// An error occured when trying to log
+    #[cfg(feature = "logging")]
     Log { cause: LogError },
     /// An error occurred when trying to run the [Executable]
     Run { cause: RunError },

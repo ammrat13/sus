@@ -14,6 +14,22 @@ mod request;
 use permission::verify::AbstractVerifier;
 use request::Request;
 
+#[cfg(feature = "logging")]
+use log::AbstractLogger;
+
+/// Method to get the [Logger][lg] to use
+///
+/// Logging is an optional feature for this binary. As such, we need to use
+/// `cfg` for conditional compilation. This gets a bit tricky with the structure
+/// we currently have - everything initialized in its own variable in [main].
+/// Thus, for optional features we define these separate functions.
+///
+/// [lg]: log::Logger
+#[cfg(feature = "logging")]
+fn get_logger() -> Box<AbstractLogger> {
+    Box::new(config::LOGGER)
+}
+
 /// Main method for the kernel
 ///
 /// This is the main method for the SUS kernel. As is standard practice in Rust,
@@ -37,7 +53,6 @@ fn main() {
     // Put the runner in a box
     // Do the same with the logger
     let runner = Box::new(config::RUNNER);
-    let logger = Box::new(config::LOGGER);
 
     // Create the verifiers
     // We need to clone them from the slice reference
@@ -54,13 +69,18 @@ fn main() {
             .collect()
     };
 
+    // Create the request
     let req = Request {
+        // Base functionality
         executable,
         current_permissions,
         requested_permissions,
         verifiers,
         runner,
-        logger,
+        // Logging functionality
+        #[cfg(feature = "logging")]
+        logger: get_logger(),
     };
+    // Service the request
     req.service().unwrap();
 }
