@@ -43,27 +43,30 @@ pub type VerifyResult = Result<(), VerifyError>;
 #[derive(Debug)]
 pub enum VerifyError {
     /// The user is not allowed to run the [Executable]
-    NotAllowed { err: Box<dyn Error> },
+    NotAllowed { err: Option<Box<dyn Error>> },
     /// Some component needed for verification was not found
-    NotFound { err: Box<dyn Error> },
+    NotFound { err: Option<Box<dyn Error>> },
     /// Some component needed for verification could not be parsed
-    Malformed { err: Box<dyn Error> },
+    Malformed { err: Option<Box<dyn Error>> },
 }
 
 impl Display for VerifyError {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        // Write different things depending on the type
-        match self {
-            // Special message if not allowed
-            VerifyError::NotAllowed { err } => {
-                write!(f, "Access Denied - {}", err)?;
+        // Store both the message and the "wrapped" error
+        // Match on how we were constructed to get these
+        let (err, msg) = match self {
+            VerifyError::NotAllowed { err: e } => (e, "Access Denied"),
+            VerifyError::NotFound { err: e } => (e, "Internal Error NotFound"),
+            VerifyError::Malformed { err: e } => (e, "Internal Error Malformed"),
+        };
+        // Print out the message
+        // Also print details if needed
+        match err {
+            Some(e) => {
+                write!(f, "{} - {}", msg, e)?;
             }
-            // Internal errors
-            VerifyError::NotFound { err } => {
-                write!(f, "Internal Error NotFound - {}", err)?;
-            }
-            VerifyError::Malformed { err } => {
-                write!(f, "Internal Error Malformed - {}", err)?;
+            None => {
+                write!(f, "{}", msg)?;
             }
         }
         // Return
