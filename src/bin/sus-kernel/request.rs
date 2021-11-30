@@ -11,6 +11,7 @@ use crate::executable::run::RunError;
 use crate::executable::Executable;
 use crate::permission::verify::Verifier;
 use crate::permission::verify::VerifyError;
+use crate::permission::verify::VerifyResult;
 use crate::permission::Permission;
 
 use std::convert::Infallible;
@@ -61,14 +62,22 @@ impl Request {
     pub fn service(mut self) -> RequestResult {
         // Assert that all the verifications pass
         // Note the question mark to unwrap the result
-        for mut v in self.verifiers {
-            v(
-                &self.current_permissions,
-                &self.requested_permissions,
-                &self.executable,
-            )
-            .map_err(|e| RequestError::Verify { cause: e })?;
-        }
+        let verify_res = {
+            let mut res: VerifyResult = Err(VerifyError::NotAllowed);
+            for v in &mut self.verifiers {
+                let verifier_result = v(
+                    &self.current_permissions,
+                    &self.requested_permissions,
+                    &self.executable,
+                );
+                res = res.or(verifier_result);
+                println!("{:?}", res);
+            }
+            // Return
+            res
+        };
+        println!("verifyerr: {:?}", verify_res);
+        verify_res.map_err(|e| RequestError::Verify { cause: e })?;
         // Execute and unwrap
         (self.runner)(&self.requested_permissions, &self.executable)
             .map_err(|e| RequestError::Run { cause: e })
