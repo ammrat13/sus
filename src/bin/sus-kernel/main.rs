@@ -51,7 +51,6 @@ fn main() {
     let current_permissions = config::CURRENT_PERMISSION_FACTORY().unwrap();
     let requested_permissions = config::REQUESTED_PERMISSION_FACTORY().unwrap();
     // Put the runner in a box
-    // Do the same with the logger
     let runner = Box::new(config::RUNNER);
 
     // Create the verifiers
