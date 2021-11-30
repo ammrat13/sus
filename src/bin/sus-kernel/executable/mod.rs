@@ -16,6 +16,8 @@ pub mod factory;
 pub mod run;
 
 use std::ffi::CString;
+use std::fmt;
+use std::fmt::{Display, Formatter};
 
 /// Structure representing an executable program
 ///
@@ -27,4 +29,18 @@ pub struct Executable {
     pub path: CString,
     /// The command line arguments to pass to the executable
     pub args: Vec<CString>,
+}
+
+impl Display for Executable {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        // Write the path to the executable
+        write!(f, "\"{}\"", self.path.to_string_lossy())?;
+        // Write all the arguments
+        write!(f, " with arguments")?;
+        for a in &self.args {
+            write!(f, " \"{}\"", a.to_string_lossy())?;
+        }
+        // Return
+        Ok(())
+    }
 }

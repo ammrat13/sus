@@ -7,14 +7,29 @@
 
 mod config;
 mod executable;
+mod log;
 mod permission;
 mod request;
 
 use permission::verify::from_sudoers;
 // use permission::verify::AbstractVerifier;
 use request::Request;
-
 use crate::permission::verify::Verifier;
+#[cfg(feature = "log")]
+use log::AbstractLogger;
+
+/// Method to get the [Logger][lg] to use
+///
+/// Logging is an optional feature for this binary. As such, we need to use
+/// `cfg` for conditional compilation. This gets a bit tricky with the structure
+/// we currently have - everything initialized in its own variable in [main].
+/// Thus, for optional features we define these separate functions.
+///
+/// [lg]: log::Logger
+#[cfg(feature = "log")]
+fn get_logger() -> Box<AbstractLogger> {
+    Box::new(config::LOGGER)
+}
 
 /// Main method for the kernel
 ///
@@ -54,12 +69,19 @@ fn main() {
             .map(|f| Box::new(f) as Box<Verifier>)
             .collect()
     };
+
+    // Create the request
     let req = Request {
+        // Base functionality
         executable,
         current_permissions,
         requested_permissions,
         verifiers,
         runner,
+        // Logging functionality
+        #[cfg(feature = "log")]
+        logger: get_logger(),
     };
+    // Service the request
     req.service().unwrap();
 }

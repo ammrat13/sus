@@ -16,6 +16,11 @@ use crate::permission;
 use crate::permission::factory::AutoPermissionFactory;
 // use crate::permission::verify::Verifier;
 
+#[cfg(feature = "log")]
+use crate::log;
+#[cfg(feature = "log")]
+use crate::log::Logger;
+
 /// The method to use to find the [Executable][eb] to run
 ///
 /// [eb]: executable::Executable
@@ -57,6 +62,98 @@ pub const REQUESTED_PERMISSION_FACTORY: AutoPermissionFactory =
 ///
 /// [eb]: executable::Executable
 pub const RUNNER: Runner = executable::run::exec;
+
+/// How to log incoming [Request][rq]s
+///
+/// For administrative purposes, it might be useful to log what [Request][rq]s
+/// people make to this binary. This is the function that is called for logging.
+///
+/// [rq]: crate::request::Request
+#[cfg(feature = "log")]
+pub const LOGGER: Logger = log::to_file;
+
+/// The path to log to
+///
+/// The [log::to_file] logger uses this path to determine where to log *all* the
+/// incoming [Request][rq]s, both successful and failed. As such, this log file
+/// can grow very quickly and should be rotated regularly, say with `logrotate`.
+/// This path is hard-coded into the binary and cannot be changed at runtime.
+///
+/// [rq]: crate::request::Request
+#[cfg(feature = "log")]
+pub const LOG_FILE_PATH: &str = "/var/log/sus.log";
+/// The permissions to log with
+///
+/// This configuration parameter sets the permissions that [log::to_file] will
+/// set the log file. They will be set unconditionally.
+#[cfg(feature = "log")]
+pub const LOG_FILE_PERMS: u32 = 0o400;
+
+/// The format of the log message on success
+///
+/// The logging functionality of this crate allows us to configure the messages
+/// that are written on success and failure. This configuration parameter
+/// configures the success message.
+///
+/// Note that this is a macro instead of a hard string literal. This is so that
+/// formatting string still works. The format string literal has to be in the
+/// code literally or as a macro. Thus, this solution.
+///
+/// The code provides the following variables for use
+///   * `tstamp_secs`: The current unix timestamp's whole number part in seconds
+///   * `tstamp_nanos`: The fractional part of the current unix timestamp in
+///     nanoseconds
+///   * `execable`: The [Executable][eb] to execute
+///   * `cur_perm`: The current [Permissions][pm] of the user
+///   * `req_perm`: The [Permissions][pm] the user requested
+///
+/// [eb]: executable::Executable
+/// [pm]: permission::Permission
+#[cfg(feature = "log")]
+macro_rules! LOG_WRITE_SUCCESS_MSG {
+    () => {
+        "{tstamp_secs}.{tstamp_nanos:0>9} SUCCESS Executing {execable}; From {cur_perm}; To {req_perm}\n"
+    };
+}
+#[cfg(feature = "log")]
+pub(crate) use LOG_WRITE_SUCCESS_MSG;
+/// The format of the log message on failure
+///
+/// The logging functionality of this crate allows us to configure the messages
+/// that are written on success and failure. This configuration parameter
+/// configures the failure message.
+///
+/// Note that this is a macro instead of a hard string literal. This is so that
+/// formatting string still works. The format string literal has to be in the
+/// code literally or as a macro. Thus, this solution.
+///
+/// The code provides the following variables for use
+///   * `tstamp_secs`: The current unix timestamp's whole number part in seconds
+///   * `tstamp_nanos`: The fractional part of the current unix timestamp in
+///     nanoseconds
+///   * `execable`: The [Executable][eb] to execute
+///   * `cur_perm`: The current [Permissions][pm] of the user
+///   * `req_perm`: The [Permissions][pm] the user requested
+///   * `failure`: The [VerifyError][ve] reported. Only provided if the
+///     `log_fail_msg` feature is enabled.
+///
+/// [eb]: executable::Executable
+/// [pm]: permission::Permission
+/// [ve]: permission::verify::VerifyError
+#[cfg(all(feature = "log", not(feature = "log_fail_msg")))]
+macro_rules! LOG_WRITE_FAILURE_MSG {
+    () => {
+        "{tstamp_secs}.{tstamp_nanos:0>9} FAILURE Executing {execable}; From {cur_perm}; To {req_perm}\n"
+    };
+}
+#[cfg(all(feature = "log", feature = "log_fail_msg"))]
+macro_rules! LOG_WRITE_FAILURE_MSG {
+    () => {
+        "{tstamp_secs}.{tstamp_nanos:0>9} FAILURE Executing {execable}; From {cur_perm}; To {req_perm}; Error {failure}\n"
+    };
+}
+#[cfg(feature = "log")]
+pub(crate) use LOG_WRITE_FAILURE_MSG;
 
 /// What command line argument number to look for for the path of the binary to
 /// execute
