@@ -11,6 +11,9 @@ log_fail_msg = [ "log" ]
 [[bin]]
 name = "sus-kernel"
 
+[[bin]]
+name = "sus"
+
 [dependencies]
 nix = "0.23.0"
 serde = { version="1.0.130", features = ["derive"] }
