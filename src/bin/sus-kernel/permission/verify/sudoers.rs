@@ -42,7 +42,7 @@ pub fn from_sudoers() -> Vec<Box<Verifier>> {
                     }
                 }
             }
-            Err(VerifyError::NotAllowed)
+            Err(VerifyError::NotAllowed{err: None})
         });
         verifiers.push(x);
     }
