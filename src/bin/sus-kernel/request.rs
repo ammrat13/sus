@@ -76,7 +76,7 @@ impl Request {
         // Assert that all the verifications pass
         // Note the question mark to unwrap the result
         let verify_res = {
-            let mut res: VerifyResult = Err(VerifyError::NotAllowed);
+            let mut res: VerifyResult = Err(VerifyError::NotAllowed {err: None});
             for v in &mut self.verifiers {
                 let verifier_result = v(
                     &self.current_permissions,
