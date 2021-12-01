@@ -14,6 +14,9 @@ use crate::permission::verify::VerifyError;
 use crate::permission::verify::VerifyResult;
 use crate::permission::Permission;
 
+#[cfg(feature = "log")]
+use crate::log::{AbstractLogger, LogError};
+
 use std::convert::Infallible;
 
 /// Structure representing a user request
@@ -45,6 +48,16 @@ pub struct Request {
     pub verifiers: Vec<Box<Verifier>>,
     /// How to run the [Executable]
     pub runner: Box<AbstractRunner>,
+
+    /// How to log [Request]s
+    ///
+    /// Regardless of whether it passed all the [Verifiers][vf], this function
+    /// will be called with the status. This function can then log the result
+    /// somewhere for administration purposes.
+    ///
+    /// [vf]: crate::permission::verify::Verifier
+    #[cfg(feature = "log")]
+    pub logger: Box<AbstractLogger>,
 }
 
 impl Request {
@@ -63,7 +76,7 @@ impl Request {
         // Assert that all the verifications pass
         // Note the question mark to unwrap the result
         let verify_res = {
-            let mut res: VerifyResult = Err(VerifyError::NotAllowed{err:None});
+            let mut res: VerifyResult = Err(VerifyError::NotAllowed { err: None });
             for v in &mut self.verifiers {
                 let verifier_result = v(
                     &self.current_permissions,
@@ -71,12 +84,23 @@ impl Request {
                     &self.executable,
                 );
                 res = res.or(verifier_result);
-                println!("{:?}", res);
             }
             // Return
             res
         };
-        println!("verifyerr: {:?}", verify_res);
+        // Log the attempt result
+        // Fail out immediately if we can't
+        #[cfg(feature = "log")]
+        {
+            (self.logger)(
+                &self.executable,
+                &self.current_permissions,
+                &self.requested_permissions,
+                &verify_res,
+            )
+            .map_err(|e| RequestError::Log { cause: e })?;
+        }
+        // Fail out if we didn't verify
         verify_res.map_err(|e| RequestError::Verify { cause: e })?;
         // Execute and unwrap
         (self.runner)(&self.requested_permissions, &self.executable)
@@ -105,6 +129,9 @@ pub type RequestResult = Result<Infallible, RequestError>;
 pub enum RequestError {
     /// An error occured during verification
     Verify { cause: VerifyError },
+    /// An error occured when trying to log
+    #[cfg(feature = "log")]
+    Log { cause: LogError },
     /// An error occurred when trying to run the [Executable]
     Run { cause: RunError },
 }

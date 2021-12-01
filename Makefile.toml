@@ -12,6 +12,10 @@
 CARGO_MAKE_CLIPPY_ARGS = "-- -D warnings"
 
 
+# Pass the same features to `cargo check` as we do for the build
+[tasks.check]
+args = [ "check", "@@split(CARGO_MAKE_CARGO_BUILD_TEST_FLAGS, )" ]
+
 # Run audit unconditionally
 [tasks.audit]
 condition = {}
@@ -43,7 +47,8 @@ dependencies = [
 
 # Task to build the application in release mode
 # It runs formatting and linting, but in check mode only. This task is for
-#  release builds, so the code should be good to go
+#  release builds, so the code should be good to go. Also, we don't need to
+#  explicitly do the configuration files. They will be copied over then checked.
 # It also generates documentation
 [tasks.sus-release-build]
 description = "Workflow to build and test SUS in release mode"
@@ -58,6 +63,13 @@ dependencies = [
     "build-release",
     "docs",
 ]
+
+# Task to build the application for end users
+# It calls into `sus-release-build`, except it doesn't have `--all-features`
+#  enabled. Only the default features are compiled.
+[tasks.sus-dist-build]
+env = { "CARGO_MAKE_CARGO_BUILD_TEST_FLAGS" = "" }
+run_task = "sus-release-build"
 
 
 # Task to install

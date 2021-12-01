@@ -13,6 +13,8 @@ use crate::executable::Executable;
 pub use sudoers::from_sudoers;
 
 use std::error::Error;
+use std::fmt;
+use std::fmt::{Display, Formatter};
 
 /// Type for verification functions
 ///
@@ -50,9 +52,33 @@ pub const ALL: &str = "ALL";
 #[derive(Debug)]
 pub enum VerifyError {
     /// The user is not allowed to run the [Executable]
-    NotAllowed,
+    NotAllowed { err: Option<Box<dyn Error>> },
     /// Some component needed for verification was not found
-    NotFound { err: Box<dyn Error> },
+    NotFound { err: Option<Box<dyn Error>> },
     /// Some component needed for verification could not be parsed
-    Malformed { err: Box<dyn Error> },
+    Malformed { err: Option<Box<dyn Error>> },
+}
+
+impl Display for VerifyError {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        // Store both the message and the "wrapped" error
+        // Match on how we were constructed to get these
+        let (err, msg) = match self {
+            VerifyError::NotAllowed { err: e } => (e, "Access Denied"),
+            VerifyError::NotFound { err: e } => (e, "Internal Error NotFound"),
+            VerifyError::Malformed { err: e } => (e, "Internal Error Malformed"),
+        };
+        // Print out the message
+        // Also print details if needed
+        match err {
+            Some(e) => {
+                write!(f, "{} - {}", msg, e)?;
+            }
+            None => {
+                write!(f, "{}", msg)?;
+            }
+        }
+        // Return
+        Ok(())
+    }
 }
