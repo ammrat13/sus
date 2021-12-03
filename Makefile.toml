@@ -77,7 +77,7 @@ run_task = "sus-release-build"
 [tasks.install]
 description = "Install the application"
 category = "Install"
-dependencies = [ "sus-release-build" ]
+dependencies = [ "sus-dist-build" ]
 env_files = [
     { path = "./config/install.env" }
 ]
