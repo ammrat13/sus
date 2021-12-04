@@ -1,6 +1,6 @@
-use crate::config;
 use super::sudoers_type::Sudoers;
 use super::{Verifier, VerifyError};
+use crate::config;
 use crate::permission::verify::VerifyResult;
 use nix::unistd::{Gid, Uid};
 use std::ffi::CString;

@@ -59,7 +59,7 @@ pub const RUNNER: Runner = executable::run::exec;
 ///
 /// [rq]: crate::request::Request
 #[cfg(feature = "log")]
-pub const SUDOER_PATH: &str = "/etc/sudoers.json";
+pub const SUDOER_PATH: &str = "/etc/sudoer.json";
 
 /// How to log incoming [Request][rq]s
 ///

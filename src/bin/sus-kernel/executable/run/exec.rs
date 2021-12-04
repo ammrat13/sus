@@ -43,7 +43,7 @@ pub fn exec(perm: &Permission, execable: &Executable) -> RunResult {
     // Set the user
     // Fail out on error
     unistd::setuid(perm.uid).map_err(|en| RunError::SetUID { errno: en })?;
-    
+
     // Execute
     unistd::execve::<CString, CString>(&execable.path, &execable.args, &[])
         .map_err(|en| RunError::Execute { errno: en })

@@ -8,9 +8,9 @@
 pub mod parsed_sudoers_type;
 pub mod sudoers;
 pub mod sudoers_type;
-pub use sudoers::from_sudoers;
 use super::Permission;
 use crate::executable::Executable;
+pub use sudoers::from_sudoers;
 
 use std::error::Error;
 use std::fmt;

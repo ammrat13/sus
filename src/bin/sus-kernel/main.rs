@@ -11,10 +11,10 @@ mod log;
 mod permission;
 mod request;
 
-use permission::verify::from_sudoers;
 use crate::permission::verify::Verifier;
 #[cfg(feature = "log")]
 use log::AbstractLogger;
+use permission::verify::from_sudoers;
 
 use request::Request;
 
