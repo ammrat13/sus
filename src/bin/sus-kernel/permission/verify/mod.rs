@@ -8,9 +8,9 @@
 pub mod parsed_sudoers_type;
 pub mod sudoers;
 pub mod sudoers_type;
+pub use sudoers::from_sudoers;
 use super::Permission;
 use crate::executable::Executable;
-pub use sudoers::from_sudoers;
 
 use std::error::Error;
 use std::fmt;
@@ -22,16 +22,7 @@ use std::fmt::{Display, Formatter};
 /// the [Permission] they request and the [Executable] the user wishes to run.
 /// They should then return a [VerifyResult] signalling whether the user is
 /// allowed to run it.
-// pub type Verifier = fn(&Permission, &Permission, &Executable) -> VerifyResult;
 pub type Verifier = dyn FnMut(&Permission, &Permission, &Executable) -> VerifyResult;
-
-/// Abstract supertype of [Verifier]
-///
-/// For testing purposes, we might want to have [Verifier]s signal other parts
-/// of the code. This trait allows for that. Since it's a `dyn` type, we can't
-/// create variables with it. However, it will work for automatically generated
-/// closures.
-// pub type AbstractVerifier = dyn FnMut(&Permission, &Permission, &Executable) -> VerifyResult;
 
 /// Convinience type for the result of a [Verifier]
 ///

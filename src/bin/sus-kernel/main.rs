@@ -12,10 +12,10 @@ mod permission;
 mod request;
 
 use permission::verify::from_sudoers;
-// use permission::verify::AbstractVerifier;
 use crate::permission::verify::Verifier;
 #[cfg(feature = "log")]
 use log::AbstractLogger;
+
 use request::Request;
 
 /// Method to get the [Logger][lg] to use
@@ -59,8 +59,6 @@ fn main() {
     let verifiers = {
         // Do the clone
         let vfers = from_sudoers();
-        // vfers.extend_from_slice(config::VERIFIERS); // Need to replace config::VERIFIERS with rules in sudoers on runtime
-
         // Create and return
         // Box everything up as well
         // See: https://newbedev.com/how-to-create-a-vector-of-boxed-closures-in-rust

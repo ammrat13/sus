@@ -51,6 +51,7 @@ where
             })
         }
     }?;
+    
     // Get the arguments, or an empty vector if they couldn't be found
     // Note the question mark at the end
     let args: Vec<CString> = match args.get(args_start_idx..) {

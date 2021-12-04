@@ -1,3 +1,4 @@
+use crate::config;
 use super::sudoers_type::Sudoers;
 use super::{Verifier, VerifyError};
 use crate::permission::verify::VerifyResult;
@@ -26,7 +27,7 @@ pub fn from_sudoers() -> Vec<Box<Verifier>> {
     // Declare vector of verifiers to return
     let mut verifiers = Vec::new();
     // Parse sudoers.json using serde_json
-    let file = File::open("sudoers.json").unwrap();
+    let file = File::open(config::SUDOER_PATH).unwrap();
     let reader = BufReader::new(file);
     let sudoer: Sudoers = serde_json::from_reader(reader).unwrap();
     // Parse sudoer further and retrieve uids and gids
@@ -47,8 +48,4 @@ pub fn from_sudoers() -> Vec<Box<Verifier>> {
         verifiers.push(x);
     }
     verifiers
-    // println!("curr_perm: {:?}\n", curr_perm);
-    //         println!("req_perm: {:?}\n", req_perm);
-    //         println!("exe: {:?}\n", exe);
-    //         println!("rule: {:?}\n", rule);
 }

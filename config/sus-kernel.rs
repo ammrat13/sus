@@ -14,7 +14,6 @@ use crate::executable::factory::AutoExecutableFactory;
 use crate::executable::run::Runner;
 use crate::permission;
 use crate::permission::factory::AutoPermissionFactory;
-// use crate::permission::verify::Verifier;
 
 #[cfg(feature = "log")]
 use crate::log;
@@ -46,22 +45,21 @@ pub const CURRENT_PERMISSION_FACTORY: AutoPermissionFactory = permission::factor
 pub const REQUESTED_PERMISSION_FACTORY: AutoPermissionFactory =
     permission::factory::from_commandline;
 
-/// An array of all the [Verifier]s to invoke
-///
-/// We might want multiple checks to pass before running [Executable][eb]. This
-/// is a list of all the checks that have to pass.
-///
-/// Note that *all* the checks have to pass for the [Executable][eb] to be run.
-/// Effectively, these checks are `AND`ed together. As a corollary, if this list
-/// is empty, the [Executable][eb] will be run unconditionally.
-///
-/// [eb]: executable::Executable
-// pub const VERIFIERS: &[Verifier] = &[];
-
 /// The method to run the [Executable][eb] created
 ///
 /// [eb]: executable::Executable
 pub const RUNNER: Runner = executable::run::exec;
+
+/// The path to log to
+///
+/// The [log::to_file] logger uses this path to determine where to log *all* the
+/// incoming [Request][rq]s, both successful and failed. As such, this log file
+/// can grow very quickly and should be rotated regularly, say with `logrotate`.
+/// This path is hard-coded into the binary and cannot be changed at runtime.
+///
+/// [rq]: crate::request::Request
+#[cfg(feature = "log")]
+pub const SUDOER_PATH: &str = "/etc/sudoers.json";
 
 /// How to log incoming [Request][rq]s
 ///
