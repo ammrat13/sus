@@ -72,3 +72,19 @@ impl Sudoers {
         ps
     }
 }
+
+// {
+//     sus_kernel::permission::verify::sudoers_type::User::Username(alloc::string::String {
+//         vec: alloc::vec::Vec<u8, alloc::alloc::Global> {
+//             buf: alloc::raw_vec::RawVec<u8, alloc::alloc::Global> {
+//                 ptr: core::ptr::unique::Unique<u8> {
+//                     pointer: 0x55abe3fe1d90, _
+//                     marker: core::marker::PhantomData<u8>
+//                 },
+//                 cap: 4,
+//                 alloc: alloc::alloc::Global
+//             },
+//             len: 4
+//         }
+//     })
+// }

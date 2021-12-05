@@ -89,14 +89,14 @@ impl Rule {
         for user in &userspec.user_list {
             match user {
                 Username(username) => {
-                    if username.eq(&ALL) {
+                    if username.eq(ALL) {
                         rule.allow_all_users = true;
                     } else if let Some(uid) = get_uid_from_username(username) {
                         rule.users.insert(uid);
                     }
                 }
                 Usergroup(groupname) => {
-                    if groupname.eq(&ALL) {
+                    if groupname.eq(ALL) {
                         rule.allow_all_groups = true;
                     } else if let Some(gid) = get_gid_from_groupname(groupname) {
                         rule.groups.insert(gid);
@@ -105,7 +105,7 @@ impl Rule {
                 Useralias(alias) => {
                     for user in &useraliases[alias] {
                         if let Username(username) = user {
-                            if username.eq(&ALL) {
+                            if username.eq(ALL) {
                                 rule.allow_all_users = true;
                             } else if let Some(uid) = get_uid_from_username(username) {
                                 rule.users.insert(uid);
@@ -119,7 +119,7 @@ impl Rule {
             let mut allowed_cmd = AllowedCmd::new();
             for runasuser in &cmd_spec.run_as_users {
                 if let Username(username) = runasuser {
-                    if username.eq(&ALL) {
+                    if username.eq(ALL) {
                         allowed_cmd.allow_all_users = true;
                     } else if let Some(uid) = get_uid_from_username(username) {
                         allowed_cmd.users.insert(uid);
@@ -128,7 +128,7 @@ impl Rule {
             }
             for runasgroup in &cmd_spec.run_as_groups {
                 if let Usergroup(groupname) = runasgroup {
-                    if groupname.eq(&ALL) {
+                    if groupname.eq(ALL) {
                         allowed_cmd.allow_all_users = true;
                     } else if let Some(gid) = get_gid_from_groupname(groupname) {
                         allowed_cmd.groups.insert(gid);
@@ -140,7 +140,6 @@ impl Rule {
             }
             for command in &cmd_spec.commands {
                 let Command::CmdPath(path) = command;
-
                 if path.to_str().unwrap().eq(ALL) {
                     allowed_cmd.allow_all_cmds = true;
                 } else {

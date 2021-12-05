@@ -14,6 +14,7 @@ mod request;
 use crate::permission::verify::Verifier;
 #[cfg(feature = "log")]
 use log::AbstractLogger;
+use nix::unistd;
 use permission::verify::from_sudoers;
 
 use request::Request;
@@ -40,6 +41,8 @@ fn get_logger() -> Box<AbstractLogger> {
 /// Note that this function does not return a [Result]. This is intentional. We
 /// want this function to just panic and not print any debugging output.
 fn main() {
+    println!("euid: {}", unistd::geteuid());
+    println!("egid: {}", unistd::getegid());
     // Set up a panic handler
     // This way, we don't give any information
     std::panic::set_hook(Box::new(|_| {
@@ -80,6 +83,9 @@ fn main() {
         #[cfg(feature = "log")]
         logger: get_logger(),
     };
+
     // Service the request
-    req.service().unwrap();
+    req.service()
+        .map_err(|e| println!("faild:  {:?}", e))
+        .unwrap();
 }

@@ -52,14 +52,9 @@ pub const RUNNER: Runner = executable::run::exec;
 
 /// The path to log to
 ///
-/// The [log::to_file] logger uses this path to determine where to log *all* the
-/// incoming [Request][rq]s, both successful and failed. As such, this log file
-/// can grow very quickly and should be rotated regularly, say with `logrotate`.
-/// This path is hard-coded into the binary and cannot be changed at runtime.
-///
-/// [rq]: crate::request::Request
-#[cfg(feature = "log")]
-pub const SUDOER_PATH: &str = "/etc/sudoer.json";
+/// The path to sudoers file. For readability purpose, this is represented as JSON
+/// and not traditional sudoers file syntax
+pub const SUDOER_PATH: &str = "/etc/sudoers.json";
 
 /// How to log incoming [Request][rq]s
 ///
