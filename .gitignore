@@ -4,4 +4,3 @@
 # Ignore all configuration modules
 # Use the ones in `config/`
 src/bin/**/config.rs
-src/config.rs
