@@ -9,7 +9,7 @@
 use crate::executable::run::AbstractRunner;
 use crate::executable::run::RunError;
 use crate::executable::Executable;
-use crate::permission::verify::AbstractVerifier;
+use crate::permission::verify::Verifier;
 use crate::permission::verify::VerifyError;
 use crate::permission::verify::VerifyResult;
 use crate::permission::Permission;
@@ -45,7 +45,7 @@ pub struct Request {
     /// list is empty, the [Executable] will be run unconditionally.
     ///
     /// [vf]: crate::permission::verify::Verifier
-    pub verifiers: Vec<Box<AbstractVerifier>>,
+    pub verifiers: Vec<Box<Verifier>>,
     /// How to run the [Executable]
     pub runner: Box<AbstractRunner>,
 
@@ -74,16 +74,16 @@ impl Request {
     /// [vf]: crate::permission::verify::Verifier
     pub fn service(mut self) -> RequestResult {
         // Assert that all the verifications pass
-        // Make sure to execute all the verifiers, regardless of if they fail.
-        //  This helps us mitigate timing attacks.
+        // Note the question mark to unwrap the result
         let verify_res = {
-            let mut res: VerifyResult = Ok(());
+            let mut res: VerifyResult = Err(VerifyError::NotAllowed { err: None });
             for v in &mut self.verifiers {
-                res = res.and(v(
+                let verifier_result = v(
                     &self.current_permissions,
                     &self.requested_permissions,
                     &self.executable,
-                ));
+                );
+                res = res.or(verifier_result);
             }
             // Return
             res

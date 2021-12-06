@@ -11,11 +11,13 @@ mod log;
 mod permission;
 mod request;
 
-use permission::verify::AbstractVerifier;
-use request::Request;
+use crate::permission::verify::Verifier;
+use permission::verify::from_sudoers;
 
 #[cfg(feature = "log")]
 use log::AbstractLogger;
+
+use request::Request;
 
 /// Method to get the [Logger][lg] to use
 ///
@@ -57,14 +59,13 @@ fn main() {
     // We need to clone them from the slice reference
     let verifiers = {
         // Do the clone
-        let mut vfers = Vec::new();
-        vfers.extend_from_slice(config::VERIFIERS);
+        let vfers = from_sudoers();
         // Create and return
         // Box everything up as well
         // See: https://newbedev.com/how-to-create-a-vector-of-boxed-closures-in-rust
         vfers
             .into_iter()
-            .map(|f| Box::new(f) as Box<AbstractVerifier>)
+            .map(|f| Box::new(f) as Box<Verifier>)
             .collect()
     };
 
@@ -80,6 +81,7 @@ fn main() {
         #[cfg(feature = "log")]
         logger: get_logger(),
     };
+
     // Service the request
     req.service().unwrap();
 }

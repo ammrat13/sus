@@ -1,0 +1,158 @@
+{
+    "Defaults": [
+        {
+            "Options": [
+                { "env_reset": true }
+            ]
+        },
+        {
+            "Options": [
+                { "mail_badpass": true }
+            ]
+        },
+        {
+            "Options": [
+                { "secure_path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin" }
+            ]
+        }
+    ],
+    "User_Aliases": {
+        "SYSADMINS": [
+            { "username": "john" },
+            { "username": "tim" },
+            { "username": "tom" }
+        ]
+    },
+    "User_Specs": [
+        {
+            "User_List": [
+                { "username": "root" }
+            ],
+            "Host_List": [
+                { "hostname": "ALL" }
+            ],
+            "Cmnd_Specs": [
+                {
+                    "runasusers": [
+                        { "username": "ALL" }
+                    ],
+                    "runasgroups": [
+                        { "usergroup": "ALL" }
+                    ],
+                    "Options": [
+                        { "setenv": true }
+                    ],
+                    "Commands": [
+                        { "command": "ALL" }
+                    ]
+                }
+            ]
+        },
+        {
+            "User_List": [
+                { "useralias": "SYSADMINS" }
+            ],
+            "Host_List": [
+                { "hostname": "ALL" }
+            ],
+            "Cmnd_Specs": [
+                {
+                    "runasusers": [
+                        { "username": "ALL" }
+                    ],
+                    "runasgroups": [
+                        { "usergroup": "ALL" }
+                    ],
+                    "Options": [
+                        { "setenv": true }
+                    ],
+                    "Commands": [
+                        { "command": "ALL" }
+                    ]
+                }
+            ]
+        },
+        {
+            "User_List": [
+                { "useralias": "SYSADMINS" }
+            ],
+            "Host_List": [
+                { "hostname": "ALL" }
+            ],
+            "Cmnd_Specs": [
+                {
+                    "runasusers": [
+                        { "username": "john" }
+                    ],
+                    "runasgroups": [
+                        { "usergroup": "sudo" }
+                    ],
+                    "Options": [
+                        { "authenticate": false },
+                        { "setenv": true }
+                    ],
+                    "Commands": [
+                        { "command": "/usr/bin/cat" }
+                    ]
+                },
+                {
+                    "runasusers": [
+                        { "username": "tom" }
+                    ],
+                    "Options": [
+                        { "authenticate": false },
+                        { "setenv": true }
+                    ],
+                    "Commands": [
+                        { "command": "/etc/shadow" }
+                    ]
+                }
+            ]
+        },
+        {
+            "User_List": [
+                { "usergroup": "admin" }
+            ],
+            "Host_List": [
+                { "hostname": "ALL" }
+            ],
+            "Cmnd_Specs": [
+                {
+                    "runasusers": [
+                        { "username": "ALL" }
+                    ],
+                    "Options": [
+                        { "setenv": true }
+                    ],
+                    "Commands": [
+                        { "command": "ALL" }
+                    ]
+                }
+            ]
+        },
+        {
+            "User_List": [
+                { "usergroup": "sudo" }
+            ],
+            "Host_List": [
+                { "hostname": "ALL" }
+            ],
+            "Cmnd_Specs": [
+                {
+                    "runasusers": [
+                        { "username": "ALL" }
+                    ],
+                    "runasgroups": [
+                        { "usergroup": "ALL" }
+                    ],
+                    "Options": [
+                        { "setenv": true }
+                    ],
+                    "Commands": [
+                        { "command": "ALL" }
+                    ]
+                }
+            ]
+        }
+    ]
+}
