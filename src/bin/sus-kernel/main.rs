@@ -12,10 +12,10 @@ mod permission;
 mod request;
 
 use crate::permission::verify::Verifier;
+use permission::verify::from_sudoers;
+
 #[cfg(feature = "log")]
 use log::AbstractLogger;
-use nix::unistd;
-use permission::verify::from_sudoers;
 
 use request::Request;
 
