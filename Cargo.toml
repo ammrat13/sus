@@ -3,10 +3,10 @@ name = "sus"
 version = "0.0.0"
 edition = "2021"
 
-# [features]
-# default = [ "log" ]
-# log = []
-# log_fail_msg = [ "log" ]
+[features]
+default = [ "log" ]
+log = []
+log_fail_msg = [ "log" ]
 
 [[bin]]
 name = "sus-kernel"
