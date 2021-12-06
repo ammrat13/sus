@@ -94,9 +94,9 @@ script = '''
 
     # Install the configuration file
     install \
-        --owner=0 --group=0
-        --mode=660
-        --no-target-directory
+        --owner=0 --group=0 \
+        --mode=660 \
+        --no-target-directory \
         "config/sample/sudoers.json" "${SUS_SUDOERS_PATH}"
 
 '''
