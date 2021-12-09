@@ -7,6 +7,8 @@
 use std::collections::HashSet;
 use std::ffi::CString;
 use std::os::unix::ffi::OsStringExt;
+
+use structopt::clap::AppSettings;
 use structopt::StructOpt;
 
 use nix::libc::{gid_t, uid_t};
@@ -23,8 +25,13 @@ use super::OptionsLike;
 /// The options here are used by the `sus` binary to interface with the
 /// `sus-kernel`. It's modeled after `sudo`. However, some options have been
 /// stripped away because the kernel can't support them.
+// We have to convince `clap` to not put the version. See:
+// <https://github.com/TeXitoi/structopt/issues/81
 #[derive(Debug, StructOpt)]
-#[structopt(name = "sus")]
+#[structopt(
+    name = "sus",
+    global_settings = &[AppSettings::DisableVersion]
+)]
 pub struct CommandLineOptions {
     /// The User to run as
     #[structopt(short = "u")]
