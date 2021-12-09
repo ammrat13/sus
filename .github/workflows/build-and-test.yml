@@ -44,6 +44,7 @@ jobs:
           name: Binaries
           path: |
             target/release/sus-kernel
+            target/release/sus
       - name: Capture docs
         uses: actions/upload-artifact@v2
         with:
