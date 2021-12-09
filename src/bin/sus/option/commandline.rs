@@ -52,10 +52,6 @@ pub struct CommandLineOptions {
     #[structopt(short = "i")]
     shell_login: bool,
 
-    /// Run the given command in the background
-    #[structopt(short = "b")]
-    background: bool,
-
     /// The binary to execute and the arguments to give it
     #[structopt(parse(try_from_str = CString::new))]
     command: Vec<CString>,
