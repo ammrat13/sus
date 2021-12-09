@@ -158,7 +158,16 @@ impl OptionsLike for CommandLineOptions {
         let gid = self.primary_gid()?.as_raw();
         match users::get_user_groups(uname, gid) {
             None => Err(OptionsError::GroupNotFound { name: None }),
-            Some(v) => Ok(v.into_iter().map(|g| Gid::from_raw(g.gid())).collect()),
+            Some(v) => {
+                // Collect the results
+                let mut gids: HashSet<Gid> =
+                    v.into_iter().map(|g| Gid::from_raw(g.gid())).collect();
+                // Remove root
+                // No idea why it's being returned
+                gids.remove(&Gid::from_raw(0));
+                // Return
+                Ok(gids)
+            }
         }
     }
 
