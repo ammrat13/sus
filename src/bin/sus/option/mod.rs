@@ -90,7 +90,7 @@ impl Options {
             &self.to_kernel_commandline()?,
         )
         .map_err(|n| OptionsError::SyscallFailure {
-            syscall_name: Some("execvp"),
+            name: Some("execvp"),
             err: Some(n),
         })
     }
@@ -159,14 +159,59 @@ pub enum OptionsError {
 
     /// Generic failure of a system call
     SyscallFailure {
-        syscall_name: Option<&'static str>,
+        name: Option<&'static str>,
         err: Option<Errno>,
     },
 }
 
 impl Display for OptionsError {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "Error")
+        match self {
+            OptionsError::BadParse { string } => {
+                match string {
+                    None => write!(f, "Failed to parse string")?,
+                    Some(s) => write!(f, "Failed to parse string - {}", s)?,
+                };
+            }
+            OptionsError::UserNotFound { name } => {
+                match name {
+                    None => write!(f, "User not found")?,
+                    Some(n) => write!(f, "User not found - {}", n)?,
+                };
+            }
+            OptionsError::GroupNotFound { name } => {
+                match name {
+                    None => write!(f, "Group not found")?,
+                    Some(n) => write!(f, "Group not found - {}", n)?,
+                };
+            }
+            OptionsError::BinaryNotFound { name } => {
+                match name {
+                    None => write!(f, "Target binary not found")?,
+                    Some(n) => write!(f, "Target binary not found - {}", n)?,
+                };
+            }
+            OptionsError::SyscallFailure { name, err } => {
+                // Write the header
+                write!(f, "Failed to make system call")?;
+                // Write a dash if needed
+                if name.is_some() || err.is_some() {
+                    write!(f, " - ")?;
+                }
+                // Write the name
+                match name {
+                    Some(n) => write!(f, "`{}`", n)?,
+                    None => (),
+                };
+                // Write the error
+                match err {
+                    Some(e) => write!(f, " {}", e)?,
+                    None => (),
+                };
+            }
+        };
+
+        Ok(())
     }
 }
 

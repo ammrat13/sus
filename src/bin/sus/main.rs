@@ -7,7 +7,7 @@
 mod config;
 mod option;
 
-use std::error::Error;
+use std::process::exit;
 use structopt::StructOpt;
 
 use option::CommandLineOptions;
@@ -19,7 +19,25 @@ use option::Options;
 /// libraries, and this function simply calls into those libraries.
 /// Specifically, it parses the command line arguments and calls the kernel with
 /// them, printing out errors if there were any.
-fn main() -> Result<(), Box<dyn Error>> {
-    Options::parse_options_like(CommandLineOptions::from_args())?.execute()?;
-    Ok(())
+///
+/// In this function, we need to manually pretty-print errors.
+fn main() {
+    // Create the options and check for errors
+    let opts = match Options::parse_options_like(CommandLineOptions::from_args()) {
+        Err(e) => {
+            println!("Error: {}", e);
+            exit(101);
+        }
+        Ok(o) => o,
+    };
+    // Execute and print any errors
+    let res = opts.execute();
+    if let Err(e) = res {
+        println!("Error: {}", e);
+        exit(101);
+    }
+
+    // We should never be able to reach here
+    // The execution should happen before
+    println!("Successfully failed");
 }

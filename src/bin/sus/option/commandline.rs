@@ -146,7 +146,7 @@ impl OptionsLike for CommandLineOptions {
         if self.preserve_secondary_groups {
             return match unistd::getgroups() {
                 Err(n) => Err(OptionsError::SyscallFailure {
-                    syscall_name: Some("getgroups"),
+                    name: Some("getgroups"),
                     err: Some(n),
                 }),
                 Ok(v) => Ok(v.into_iter().collect()),
