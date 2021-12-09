@@ -16,15 +16,15 @@ pub const KERNEL_PATH: &str = "/usr/local/bin/sus-kernel";
 
 /// What command line argument number to put the path of the binary to execute
 /// at
-pub const KERNEL_COMMANDLINE_BINARY_IDX: usize = 3;
+pub const KERNEL_COMMANDLINE_BINARY_IDX: usize = 4;
 /// What command line argument number to use for the first parameter to the
 /// program, with subsequent arguments being used in order
-pub const KERNEL_COMMANDLINE_ARG_START_IDX: usize = 4;
+pub const KERNEL_COMMANDLINE_ARG_START_IDX: usize = 5;
 
 /// What command line argument number to put the UID at
-pub const KERNEL_COMMANDLINE_UID_IDX: usize = 0;
+pub const KERNEL_COMMANDLINE_UID_IDX: usize = 1;
 /// What command line argument number to put the Primary GID at
-pub const KERNEL_COMMANDLINE_PRIMARY_GID_IDX: usize = 1;
+pub const KERNEL_COMMANDLINE_PRIMARY_GID_IDX: usize = 2;
 /// What command line argument number to put a comma separated list of the
 /// Secondary GIDs at
-pub const KERNEL_COMMANDLINE_SECONDARY_GID_IDX: usize = 2;
+pub const KERNEL_COMMANDLINE_SECONDARY_GID_IDX: usize = 3;

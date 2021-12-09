@@ -96,7 +96,7 @@ impl OptionsLike for CommandLineOptions {
 
     /// Function to get the Primary GID
     ///
-    /// Very similar to [uid], with much the same semantics. Allows the user to
+    /// Very similar to [Uid], with much the same semantics. Allows the user to
     /// set the primary group to execute as.
     fn primary_gid(&self) -> Result<Gid, OptionsError> {
         // Root if not provided

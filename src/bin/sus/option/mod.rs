@@ -8,7 +8,9 @@
 pub mod commandline;
 pub use commandline::CommandLineOptions;
 
+use core::convert::Infallible;
 use nix::errno::Errno;
+use nix::unistd;
 use nix::unistd::{Gid, Uid};
 use std::collections::HashSet;
 use std::error::Error;
@@ -62,7 +64,7 @@ impl Options {
     /// Create an [Options] from an [OptionsLike]
     ///
     /// `TryFrom` would be better here, but we can't use that with generics.
-    /// See: https://github.com/rust-lang/rust/issues/50133
+    /// See: <https://github.com/rust-lang/rust/issues/50133>
     pub fn parse_options_like<T>(ol: T) -> Result<Options, OptionsError>
     where
         T: OptionsLike,
@@ -77,6 +79,22 @@ impl Options {
         })
     }
 
+    /// Call into the kernel with these [Options]
+    ///
+    /// This method will generate the command line arguments using
+    /// [Options::to_kernel_commandline], then call `execvp` with those
+    /// arguments using the configured kernel path.
+    pub fn execute(self) -> Result<Infallible, OptionsError> {
+        unistd::execvp(
+            &make_cstring(config::KERNEL_PATH.to_string())?,
+            &self.to_kernel_commandline()?,
+        )
+        .map_err(|n| OptionsError::SyscallFailure {
+            syscall_name: Some("execvp"),
+            err: Some(n),
+        })
+    }
+
     /// Function to convert to kernel arguments
     ///
     /// The function either returns a vector of [CString]s if the conversion
@@ -85,11 +103,11 @@ impl Options {
     /// [BadParse][bp].
     ///
     /// [bp]: OptionsError::BadParse
-    pub fn to_kernel_commandline(&self) -> Result<Vec<CString>, OptionsError> {
+    fn to_kernel_commandline(&self) -> Result<Vec<CString>, OptionsError> {
         // Create the return vector
-        let mut ret: Vec<CString> = Vec::new();
-        // Populate with empty strings
-        for _ in 0..config::KERNEL_COMMANDLINE_ARG_START_IDX {
+        let mut ret: Vec<CString> = vec![make_cstring(config::KERNEL_PATH.to_string())?];
+        // Populate the rest with empty strings
+        for _ in 1..config::KERNEL_COMMANDLINE_ARG_START_IDX {
             ret.push(make_cstring("".to_string())?);
         }
 
