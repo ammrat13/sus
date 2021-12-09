@@ -229,18 +229,20 @@ impl OptionsLike for CommandLineOptions {
             ret.push(CString::new("-l").map_err(|_| OptionsError::BadParse { string: None })?);
         }
 
-        // Execute a particular command
-        ret.push(CString::new("-c").map_err(|_| OptionsError::BadParse { string: None })?);
-        ret.push(
-            CString::new(
-                self.command
-                    .iter()
-                    .map(|s| s.as_bytes())
-                    .collect::<Vec<&[u8]>>()
-                    .join(&0x20),
-            )
-            .map_err(|_| OptionsError::BadParse { string: None })?,
-        );
+        // Execute a particular command if we're not just executing a shell
+        if !self.command.is_empty() {
+            ret.push(CString::new("-c").map_err(|_| OptionsError::BadParse { string: None })?);
+            ret.push(
+                CString::new(
+                    self.command
+                        .iter()
+                        .map(|s| s.as_bytes())
+                        .collect::<Vec<&[u8]>>()
+                        .join(&0x20),
+                )
+                .map_err(|_| OptionsError::BadParse { string: None })?,
+            );
+        }
 
         Ok(ret)
     }
