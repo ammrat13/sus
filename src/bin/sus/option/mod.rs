@@ -16,6 +16,8 @@ use std::ffi::CString;
 use std::fmt;
 use std::fmt::{Display, Formatter};
 
+use crate::config;
+
 /// The options to pass to the `sus-kernel`
 ///
 /// This structure is used internally to find out how to execute the kernel. It
@@ -84,32 +86,37 @@ impl Options {
     ///
     /// [bp]: OptionsError::BadParse
     pub fn to_kernel_commandline(&self) -> Result<Vec<CString>, OptionsError> {
-        // Create the return arguments
-        let ret_str: Vec<String> = vec![
-            self.uid.as_raw().to_string(),
-            self.primary_gid.as_raw().to_string(),
+        // Create the return vector
+        let mut ret: Vec<CString> = Vec::new();
+        // Populate with empty strings
+        for _ in 0..config::KERNEL_COMMANDLINE_ARG_START_IDX {
+            ret.push(make_cstring("".to_string())?);
+        }
+
+        // Write the arguments
+        ret[config::KERNEL_COMMANDLINE_UID_IDX] = make_cstring(self.uid.as_raw().to_string())?;
+        ret[config::KERNEL_COMMANDLINE_PRIMARY_GID_IDX] =
+            make_cstring(self.primary_gid.as_raw().to_string())?;
+        ret[config::KERNEL_COMMANDLINE_SECONDARY_GID_IDX] = make_cstring(
             self.secondary_gids
                 .iter()
                 .map(|g| g.as_raw().to_string())
                 .collect::<Vec<String>>()
                 .join(","),
-        ];
+        )?;
+        ret[config::KERNEL_COMMANDLINE_BINARY_IDX] = self.binary.clone();
 
-        // Convert what we have so far to CStrings
-        let mut ret: Vec<CString> = ret_str
-            .iter()
-            .map(|s| {
-                CString::new(s.as_bytes()).map_err(|_| OptionsError::BadParse { string: None })
-            })
-            .collect::<Result<_, OptionsError>>()?;
-
-        // Add everything else
-        ret.push(self.binary.clone());
-        ret.append(&mut self.args.clone());
+        // Push arguments
+        ret.extend(self.args.clone());
 
         // Return
         Ok(ret)
     }
+}
+
+/// Convenience function that handles CString failures
+fn make_cstring(s: String) -> Result<CString, OptionsError> {
+    CString::new(s.as_bytes()).map_err(|_| OptionsError::BadParse { string: None })
 }
 
 /// Type for reporting errors when working with [Options]

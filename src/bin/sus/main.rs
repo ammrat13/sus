@@ -1,3 +1,4 @@
+mod config;
 mod option;
 
 use std::error::Error;
