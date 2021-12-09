@@ -4,7 +4,8 @@ version = "0.0.0"
 edition = "2021"
 
 [features]
-default = [ "log" ]
+default = [ "log", "sus" ]
+sus = [ "structopt", "which" ]
 log = []
 log_fail_msg = [ "log" ]
 
@@ -13,11 +14,12 @@ name = "sus-kernel"
 
 [[bin]]
 name = "sus"
+required-features = [ "sus" ]
 
 [dependencies]
 nix = "0.23.0"
 serde = { version="1.0.130", features = ["derive"] }
 serde_json = "1.0.67"
 users = "0.11.0"
-structopt = "0.3.25"
-which = "4.2.2"
+structopt = { version="0.3.25", optional = true }
+which = { version="4.2.2", optional = true }
