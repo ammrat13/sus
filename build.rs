@@ -11,10 +11,16 @@ struct CopySet {
 }
 
 /// The list of copies to perform
-const COPIES: &[CopySet] = &[CopySet {
-    old: "config/sus-kernel.rs",
-    new: "src/bin/sus-kernel/config.rs",
-}];
+const COPIES: &[CopySet] = &[
+    CopySet {
+        old: "config/sus-kernel.rs",
+        new: "src/bin/sus-kernel/config.rs",
+    },
+    CopySet {
+        old: "config/sus.rs",
+        new: "src/bin/sus/config.rs",
+    },
+];
 
 fn main() -> Result<(), std::io::Error> {
     // Do every copy

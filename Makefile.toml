@@ -99,6 +99,13 @@ script = '''
         --no-target-directory \
         "config/sample/sudoers.json" "${SUS_SUDOERS_PATH}"
 
+    # Install the main userspace interface
+    install \
+        --mode=755 \
+        --strip \
+        --target-directory="${SUS_INSTALL_PREFIX}/${SUS_INSTALL_DIRECTORY}" \
+        "${CARGO_MAKE_CRATE_TARGET_DIRECTORY}/release/sus"
+
 '''
 
 
